@@ -1,6 +1,6 @@
 # Typing Practice Application
 
-A modern web-based typing practice application with authentication, multiple programming languages, and performance tracking.
+A modern web-based typing practice application with Firebase authentication, multiple programming languages, and performance tracking using Firestore.
 
 ## 🚀 Features
 
@@ -8,19 +8,19 @@ A modern web-based typing practice application with authentication, multiple pro
 - **Multi-language Typing Practice**: Support for 12 programming languages
   - Python, JavaScript, Java, C++, C#, PHP, Ruby, Go, Rust, Swift, Kotlin, TypeScript
 - **Real-time Performance Metrics**: WPM (Words Per Minute), Accuracy, and Time tracking
-- **User Authentication**: Traditional login/signup with Google OAuth integration
-- **Typing History**: Persistent session storage with MongoDB
+- **Firebase Authentication**: Secure login/signup with email/password and Google OAuth
+- **Firestore Database**: Cloud-based typing history storage
 - **Responsive Design**: Modern UI with Tailwind CSS
 
 ### 🔐 Authentication
-- **Traditional Login**: Username/password authentication
-- **Google Sign-In**: OAuth 2.0 integration
+- **Firebase Authentication**: Email/password authentication
+- **Google Sign-In**: OAuth 2.0 integration with Firebase
 - **Email Validation**: Domain verification and format checking
 - **Session Management**: JWT-based authentication with 7-day expiration
 
 ### 📊 Performance Tracking
 - **Real-time Metrics**: Live WPM, accuracy, and timer display
-- **Session History**: View all completed typing sessions
+- **Session History**: View all completed typing sessions stored in Firestore
 - **Progress Tracking**: Monitor improvement over time
 - **Language-specific Stats**: Separate tracking for each programming language
 
@@ -36,12 +36,12 @@ A modern web-based typing practice application with authentication, multiple pro
 - **HTML5**: Semantic markup
 - **CSS3**: Tailwind CSS for styling
 - **JavaScript**: Vanilla JS with modern ES6+ features
-- **Google OAuth**: Client-side authentication integration
+- **Firebase SDK**: Client-side authentication and database integration
 
 ### Backend
 - **Python**: Flask web framework
-- **MongoDB**: NoSQL database for user and session storage
-- **PyMongo**: Python MongoDB driver
+- **Firebase Admin SDK**: Server-side Firebase integration
+- **Firestore**: NoSQL cloud database for user and session storage
 - **JWT**: JSON Web Tokens for session management
 - **SHA-256**: Password hashing
 
@@ -57,6 +57,8 @@ cpp_typing_practice_separated/
 ├── index.html                 # Main application interface
 ├── server.py                  # Flask backend server
 ├── requirements.txt           # Python dependencies
+├── firebase_config.py         # Firebase configuration
+├── firebase_auth.py          # Firebase authentication functions
 ├── js/
 │   ├── main.js              # Frontend JavaScript logic
 │   └── snippets/            # Language-specific code snippets
@@ -74,7 +76,7 @@ cpp_typing_practice_separated/
 
 ### Prerequisites
 - Python 3.13 or higher
-- MongoDB (local or Atlas)
+- Firebase project with Authentication and Firestore enabled
 - Modern web browser
 
 ### Installation
@@ -90,10 +92,12 @@ cpp_typing_practice_separated/
    pip install -r requirements.txt
    ```
 
-3. **Set up MongoDB**
-   - Install MongoDB locally, or
-   - Use MongoDB Atlas (cloud service)
-   - Update connection string in `server.py` if using Atlas
+3. **Set up Firebase**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication (Email/Password and Google Sign-in)
+   - Enable Firestore Database
+   - Download service account key and update `firebase_config.py`
+   - Update Firebase Web SDK config in `firebase_config.py`
 
 4. **Configure Google OAuth** (Optional)
    - Create a Google Cloud Project
@@ -114,18 +118,18 @@ cpp_typing_practice_separated/
 
 ### Getting Started
 1. **Open the application** in your web browser
-2. **Create an account** or **sign in** with existing credentials
+2. **Create an account** or **sign in** with Firebase authentication
 3. **Select a programming language** from the available options
 4. **Start typing** the displayed code snippet
-5. **Complete the snippet** to save your session
+5. **Complete the snippet** to save your session to Firestore
 6. **View your history** by clicking your username in the navbar
 
 ### Features Walkthrough
 
 #### 🔐 Authentication
-- **Sign Up**: Create a new account with username, email, and password
-- **Login**: Access your account with credentials
-- **Google Sign-In**: Quick authentication with Google account
+- **Sign Up**: Create a new account with email and password using Firebase
+- **Login**: Access your account with Firebase credentials
+- **Google Sign-In**: Quick authentication with Google account via Firebase
 - **Logout**: Securely end your session
 
 #### 🎯 Typing Practice
@@ -133,23 +137,35 @@ cpp_typing_practice_separated/
 - **Snippet Loading**: Automatic loading of language-specific code snippets
 - **Real-time Feedback**: Live WPM, accuracy, and timer updates
 - **Error Highlighting**: Visual feedback for typing mistakes
-- **Session Completion**: Automatic saving when snippet is completed
+- **Session Completion**: Automatic saving to Firestore when snippet is completed
 
 #### 📊 Performance Tracking
 - **WPM Calculation**: Words per minute based on actual typing
 - **Accuracy Measurement**: Percentage of correct characters typed
 - **Time Tracking**: Session duration in seconds
-- **History View**: Access all completed sessions
+- **History View**: Access all completed sessions from Firestore
 - **Language-specific Stats**: Separate tracking for each language
 
 ## 🔧 Configuration
 
-### MongoDB Setup
+### Firebase Setup
 ```python
-# In server.py
-MONGO_URI = "mongodb://localhost:27017/typing_practice"
-# Or for Atlas:
-# MONGO_URI = "mongodb+srv://username:password@cluster.mongodb.net/typing_practice"
+# In firebase_config.py
+FIREBASE_CONFIG = {
+    "type": "service_account",
+    "project_id": "your-project-id",
+    "private_key_id": "your-private-key-id",
+    "private_key": "-----BEGIN PRIVATE KEY-----\n...",
+    "client_email": "firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com",
+    # ... other config
+}
+
+FIREBASE_WEB_CONFIG = {
+    "apiKey": "your-api-key",
+    "authDomain": "your-project.firebaseapp.com",
+    "projectId": "your-project-id",
+    # ... other web config
+}
 ```
 
 ### Google OAuth Configuration
@@ -167,17 +183,19 @@ app.run(host='0.0.0.0', port=5000, debug=False)
 ## 📊 API Endpoints
 
 ### Authentication
-- `POST /api/signup` - User registration
-- `POST /api/login` - User login
-- `POST /api/google-login` - Google OAuth login
+- `POST /api/signup` - User registration with Firebase
+- `POST /api/login` - User login with Firebase
+- `POST /api/google-login` - Google OAuth login via Firebase
 
 ### Typing Sessions
-- `POST /api/save-typing-session` - Save completed session
-- `GET /api/get-typing-history` - Retrieve user history
+- `POST /api/save-typing-session` - Save completed session to Firestore
+- `GET /api/get-typing-history` - Retrieve user history from Firestore
+- `GET /api/user-stats/<username>` - Get user statistics
 
 ### Health & Status
 - `GET /api/health` - Server health check
 - `GET /api/languages` - Available languages
+- `GET /api/firebase-config` - Get Firebase Web SDK config
 
 ## 🎨 Customization
 
@@ -200,13 +218,13 @@ app.run(host='0.0.0.0', port=5000, debug=False)
 ### Common Issues
 
 #### Server Won't Start
-- Check if MongoDB is running
+- Check if Firebase configuration is correct
 - Verify Python dependencies are installed
 - Check port 5000 is not in use
 
 #### Authentication Issues
-- Verify Google OAuth client ID is correct
-- Check MongoDB connection string
+- Verify Firebase project is properly configured
+- Check Firebase service account credentials
 - Ensure email validation is working
 
 #### Snippets Not Loading
@@ -234,7 +252,8 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 🙏 Acknowledgments
 
 - **Flask**: Web framework
-- **MongoDB**: Database
+- **Firebase**: Authentication and database
+- **Firestore**: Cloud database
 - **Tailwind CSS**: Styling
 - **Google OAuth**: Authentication
 - **JWT**: Session management

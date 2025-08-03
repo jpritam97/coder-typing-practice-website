@@ -36,7 +36,7 @@ function showPage(pageName) {
 // Clear form fields based on page
 function clearFormFields(pageName) {
   if (pageName === 'login') {
-    document.getElementById('login-username').value = '';
+    document.getElementById('login-email').value = '';
     document.getElementById('login-password').value = '';
     document.getElementById('login-message').classList.add('hidden');
   } else if (pageName === 'signup') {
@@ -55,9 +55,66 @@ let googleClient = null;
 let availableLanguages = {};
 let currentLanguageSnippets = [];
 let currentSnippetIndex = 0;
+let currentLanguage = 'python'; // Track current language
+let firebaseApp = null;
+let firebaseAuth = null;
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with your actual Google Client ID
+
+// Initialize Firebase
+async function initializeFirebase() {
+  try {
+    // Get Firebase configuration from server
+    const response = await fetch('http://localhost:5000/api/firebase-config');
+    const data = await response.json();
+    
+    if (data.success && data.config) {
+      // Initialize Firebase
+      firebaseApp = firebase.initializeApp(data.config);
+      firebaseAuth = firebase.auth();
+      
+      // Test Firebase connection with a simple operation
+      try {
+        // Try to get current user (this will fail if API key is invalid)
+        await firebaseAuth.currentUser;
+        
+        // Set up auth state listener
+        firebaseAuth.onAuthStateChanged((user) => {
+          if (user) {
+            console.log('✅ Firebase user signed in:', user.email);
+            currentUser = {
+              uid: user.uid,
+              username: user.displayName || user.email.split('@')[0],
+              email: user.email,
+              displayName: user.displayName
+            };
+            updateAuthUI(true);
+          } else {
+            console.log('🔒 Firebase user signed out');
+            currentUser = null;
+            updateAuthUI(false);
+          }
+        });
+        
+        console.log('✅ Firebase initialized successfully');
+        return true;
+      } catch (firebaseError) {
+        console.log('❌ Firebase connection test failed:', firebaseError);
+        // Disable Firebase if connection fails
+        firebaseApp = null;
+        firebaseAuth = null;
+        return false;
+      }
+    } else {
+      console.log('⚠️ Firebase not configured, using traditional auth');
+      return false;
+    }
+  } catch (error) {
+    console.log('⚠️ Firebase initialization failed:', error);
+    return false;
+  }
+}
 
 // Initialize Google Sign-In
 function initializeGoogleSignIn() {
@@ -138,6 +195,8 @@ function checkAuthStatus() {
   const token = localStorage.getItem('authToken');
   const username = localStorage.getItem('username');
   
+  console.log('🔧 checkAuthStatus:', { token: !!token, username });
+  
   if (token && username) {
     currentUser = { 
       username, 
@@ -145,8 +204,10 @@ function checkAuthStatus() {
       email: localStorage.getItem('userEmail'),
       isGoogleUser: localStorage.getItem('isGoogleUser') === 'true'
     };
+    console.log('🔧 Setting currentUser:', currentUser);
     updateAuthUI(true);
   } else {
+    console.log('🔧 No auth token or username found');
     updateAuthUI(false);
   }
 }
@@ -156,6 +217,8 @@ function updateAuthUI(isLoggedIn) {
   const authLinks = document.getElementById('auth-links');
   const userInfo = document.getElementById('user-info');
   const usernameDisplay = document.getElementById('username-display');
+  
+  console.log('🔧 updateAuthUI called:', { isLoggedIn, currentUser });
   
   if (isLoggedIn && currentUser) {
     authLinks.classList.add('hidden');
@@ -372,6 +435,9 @@ async function loadSnippet(language) {
 // Function to handle language selection
 async function selectLanguage(language) {
   try {
+    // Set the current language
+    currentLanguage = language;
+    
     // Remove active class from all cards
     document.querySelectorAll('.lesson-card').forEach(c => c.classList.remove('active'));
     
@@ -405,22 +471,91 @@ async function selectLanguage(language) {
 }
 
 // Login function
-async function login(username, password) {
+async function login(email, password) {
   try {
+    // Try Firebase authentication first
+    if (firebaseAuth) {
+      try {
+        console.log('🔥 Using Firebase authentication for login');
+        
+        // For Firebase authentication, we need the email
+        // Use the email provided by the user
+        if (!email) {
+          showMessage('login-message', 'Please provide your email address for Firebase login', 'error');
+          return;
+        }
+        
+        // Sign in with Firebase using email and password
+        const userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Store user info
+        localStorage.setItem('authToken', user.uid);
+        localStorage.setItem('username', user.displayName || email.split('@')[0]);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('isFirebaseUser', 'true');
+        
+        currentUser = { 
+          uid: user.uid,
+          username: user.displayName || email.split('@')[0], 
+          email,
+          displayName: user.displayName || email.split('@')[0]
+        };
+        
+        updateAuthUI(true);
+        showMessage('login-message', 'Login successful with Firebase!', 'success');
+        
+        // Clear typing field when user logs in
+        clearTypingField();
+        
+        // Hide game container when user logs in
+        const gameContainer = document.getElementById('game-container');
+        if (gameContainer) {
+          gameContainer.classList.add('hidden');
+        }
+        
+        setTimeout(() => showPage('home'), 1000);
+        return;
+      } catch (firebaseError) {
+        console.log('Firebase login failed, trying traditional auth:', firebaseError);
+        
+        // Check for specific Firebase errors
+        if (firebaseError.code === 'auth/api-key-not-valid') {
+          showMessage('login-message', 'Firebase configuration error. Please contact administrator.', 'error');
+        } else if (firebaseError.code === 'auth/user-not-found') {
+          showMessage('login-message', 'User not found. Please check your email and password.', 'error');
+        } else if (firebaseError.code === 'auth/wrong-password') {
+          showMessage('login-message', 'Incorrect password. Please try again.', 'error');
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          showMessage('login-message', 'Invalid email format.', 'error');
+        } else {
+          showMessage('login-message', `Firebase login failed: ${firebaseError.message}`, 'error');
+        }
+        return;
+      }
+    }
+    
+    // Traditional authentication (Firebase-only now)
+    console.log('🔧 Using Firebase authentication for login');
+    
+    // For Firebase-only authentication, we need the email
+    // The frontend should store the email during signup and send it during login
+    const storedEmail = localStorage.getItem('userEmail') || '';
+    
     const response = await fetch('http://localhost:5000/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: email.split('@')[0], password, email })
     });
 
     const data = await response.json();
     
     if (data.success) {
       localStorage.setItem('authToken', data.token);
-      localStorage.setItem('username', username);
+      localStorage.setItem('username', email.split('@')[0]);
       localStorage.setItem('isGoogleUser', 'false');
       currentUser = { 
-        username, 
+        username: email.split('@')[0], 
         token: data.token,
         isGoogleUser: false
       };
@@ -459,6 +594,69 @@ async function signup(username, email, password) {
     }
     console.log(`✅ Email format validation passed for: ${email}`);
     
+    // Validate password strength
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      console.log(`❌ Password validation failed: ${passwordValidation.message}`);
+      showMessage('signup-message', passwordValidation.message, 'error');
+      return;
+    }
+    console.log(`✅ Password validation passed`);
+    
+    // Try Firebase authentication first
+    if (firebaseAuth) {
+      try {
+        console.log('🔥 Using Firebase authentication');
+        
+        // Create user with Firebase
+        const userCredential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Update display name
+        await user.updateProfile({
+          displayName: username
+        });
+        
+        // Send email verification
+        await user.sendEmailVerification();
+        
+        // Store user info
+        localStorage.setItem('authToken', user.uid);
+        localStorage.setItem('username', username);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('isFirebaseUser', 'true');
+        
+        currentUser = { 
+          uid: user.uid,
+          username, 
+          email,
+          displayName: username
+        };
+        
+        updateAuthUI(true);
+        showMessage('signup-message', 'Account created successfully with Firebase! Please check your email for verification.', 'success');
+        setTimeout(() => showPage('home'), 1000);
+        return;
+      } catch (firebaseError) {
+        console.log('Firebase signup failed, trying traditional auth:', firebaseError);
+        
+        // Check for specific Firebase errors
+        if (firebaseError.code === 'auth/api-key-not-valid') {
+          showMessage('signup-message', 'Firebase configuration error. Please contact administrator.', 'error');
+        } else if (firebaseError.code === 'auth/email-already-in-use') {
+          showMessage('signup-message', 'This email is already registered. Please login instead.', 'error');
+        } else if (firebaseError.code === 'auth/weak-password') {
+          showMessage('signup-message', 'Password is too weak. Please use a stronger password.', 'error');
+        } else {
+          showMessage('signup-message', `Firebase signup failed: ${firebaseError.message}`, 'error');
+        }
+        return;
+      }
+    }
+    
+    // Traditional authentication
+    console.log('🔧 Using traditional authentication');
+    
     // Check if email domain exists
     console.log(`🔍 Checking domain existence for: ${email}`);
     const domainExists = await checkEmailDomainExists(email);
@@ -492,6 +690,8 @@ async function signup(username, email, password) {
     const data = await response.json();
     
     if (data.success) {
+      // Store email in localStorage for Firebase authentication
+      localStorage.setItem('userEmail', email);
       showMessage('signup-message', 'Account created successfully! Please login.', 'success');
       setTimeout(() => showPage('login'), 1500);
     } else {
@@ -504,11 +704,22 @@ async function signup(username, email, password) {
 }
 
 // Logout function
-function logout() {
+async function logout() {
+  // Sign out from Firebase if available
+  if (firebaseAuth) {
+    try {
+      await firebaseAuth.signOut();
+      console.log('🔥 Signed out from Firebase');
+    } catch (error) {
+      console.log('Firebase signout error:', error);
+    }
+  }
+  
   localStorage.removeItem('authToken');
   localStorage.removeItem('username');
   localStorage.removeItem('userEmail');
   localStorage.removeItem('isGoogleUser');
+  localStorage.removeItem('isFirebaseUser');
   currentUser = null;
   updateAuthUI(false);
   
@@ -666,9 +877,11 @@ function handleInput() {
     const wpm = parseFloat(document.getElementById('wpm').textContent);
     const accuracy = parseInt(document.getElementById('accuracy').textContent);
     
-    // Get current language from active button
-    const activeButton = document.querySelector('.lesson-card.active');
-    const language = activeButton ? activeButton.textContent.toLowerCase() : 'unknown';
+    // Use the tracked current language
+    const language = currentLanguage || 'python';
+    
+    // Debug: Log the language being saved
+    console.log(`💾 Saving typing session for language: ${language}`);
     
     // Save session to database
     saveTypingSession(language, wpm, accuracy, timeTaken);
@@ -729,8 +942,7 @@ function resetGame() {
 
 // Load another
 async function generateNewSnippet() {
-  const active = document.querySelector('.lesson-card.active');
-  const lang = active ? active.textContent.toLowerCase().trim() : 'python';
+  const lang = currentLanguage || 'python';
   
   // If we don't have snippets loaded for this language, load them
   if (currentLanguageSnippets.length === 0) {
@@ -821,10 +1033,14 @@ function displayTypingHistory(sessions) {
     
     const timeDisplay = session.time_taken ? `${session.time_taken}s` : 'undefineds';
     
+    // Format the date for display
+    const date = new Date(session.date);
+    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    
     card.innerHTML = `
       <div class="flex justify-between items-start mb-4">
         <div class="text-lg font-semibold text-blue-400">${session.practice_type}</div>
-        <div class="text-sm text-gray-400">${session.date}</div>
+        <div class="text-sm text-gray-400">${formattedDate}</div>
       </div>
       <div class="grid grid-cols-3 gap-4 text-sm">
         <div class="text-center">
@@ -847,7 +1063,13 @@ function displayTypingHistory(sessions) {
 }
 
 // Form event listeners
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 Initializing Typing Practice Application...');
+  
+  // Initialize Firebase first
+  const firebaseInitialized = await initializeFirebase();
+  console.log(`🔥 Firebase initialization: ${firebaseInitialized ? 'success' : 'fallback'}`);
+  
   // Check authentication status
   checkAuthStatus();
   
@@ -889,9 +1111,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const username = document.getElementById('login-username').value;
+      const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
-      login(username, password);
+      login(email, password);
     });
   }
   
@@ -933,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup email validation for signup
   setupEmailValidation();
   
-
+  console.log('✅ Application initialized successfully');
   
   // Show home page by default
   showPage('home');
@@ -943,6 +1165,53 @@ document.addEventListener('DOMContentLoaded', () => {
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
+}
+
+function validatePassword(password) {
+  // Check minimum length
+  if (password.length < 8) {
+    return {
+      isValid: false,
+      message: 'Password must be at least 8 characters long'
+    };
+  }
+  
+  // Check for at least one uppercase letter
+  if (!/[A-Z]/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one uppercase letter'
+    };
+  }
+  
+  // Check for at least one lowercase letter
+  if (!/[a-z]/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one lowercase letter'
+    };
+  }
+  
+  // Check for at least one number
+  if (!/\d/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one number'
+    };
+  }
+  
+  // Check for at least one special character
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)'
+    };
+  }
+  
+  return {
+    isValid: true,
+    message: 'Password is strong'
+  };
 }
 
 // Check if email domain exists (using server endpoint)

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Test</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; margin: 5px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Firebase Authentication Test</h1>
+        <div id="status"></div>
+        
+        <h2>Test Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <button type="button" onclick="testAnonymousAuth()">Test Anonymous Auth</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        const firebaseConfig = {
+            "apiKey": "AIzaSyDdr_tLhu_K5vrWatfUt5oUIqphab5DiH0",
+            "authDomain": "coder-typing-practice-website.firebaseapp.com",
+            "projectId": "coder-typing-practice-website",
+            "storageBucket": "coder-typing-practice-website.appspot.com",
+            "messagingSenderId": "259303858602",
+            "appId": "1:259303858602:web:adac445e988c6b6abb0bd3"
+        };
+
+        let firebaseApp = null;
+        let firebaseAuth = null;
+
+        try {
+            // Initialize Firebase
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            firebaseAuth = firebase.auth();
+            
+            document.getElementById('status').innerHTML = '<div class="status success">✅ Firebase initialized successfully</div>';
+            
+            // Set up auth state listener
+            firebaseAuth.onAuthStateChanged((user) => {
+                if (user) {
+                    document.getElementById('result').innerHTML = 
+                        `<div class="status success">✅ User signed in: ${user.email || 'Anonymous'}</div>`;
+                } else {
+                    document.getElementById('result').innerHTML = 
+                        '<div class="status error">🔒 No user signed in</div>';
+                }
+            });
+                
+        } catch (error) {
+            document.getElementById('status').innerHTML = 
+                `<div class="status error">❌ Firebase initialization failed: ${error.message}</div>`;
+        }
+
+        // Handle login form
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
+                document.getElementById('result').innerHTML = 
+                    `<div class="status success">✅ Login successful: ${userCredential.user.email}</div>`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `<div class="status error">❌ Login failed: ${error.message}</div>`;
+            }
+        });
+
+        async function testAnonymousAuth() {
+            try {
+                const result = await firebaseAuth.signInAnonymously();
+                document.getElementById('result').innerHTML = 
+                    '<div class="status success">✅ Anonymous auth successful</div>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `<div class="status error">❌ Anonymous auth failed: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html> 

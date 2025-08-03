@@ -19,7 +19,22 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 
-# Import email configuration
+# Import Firebase authentication
+try:
+    from firebase_auth import (
+        initialize_firebase, create_user_with_email_password,
+        sign_in_with_email_password, verify_firebase_token,
+        get_user_by_uid, is_firebase_configured, get_firebase_web_config,
+        save_typing_session_to_firestore, get_typing_history_from_firestore,
+        get_user_stats_from_firestore
+    )
+    FIREBASE_AVAILABLE = True
+    print("✅ Firebase authentication and Firestore available")
+except ImportError:
+    FIREBASE_AVAILABLE = False
+    print("⚠️ Firebase authentication not available. Install with: pip install firebase-admin")
+
+# Import email configuration (fallback)
 try:
     from email_config import *
 except ImportError:
@@ -49,14 +64,8 @@ except ImportError:
     ENABLE_REAL_EMAIL_SENDING = True
     TIMEOUT_SECONDS = 10
 
-# MongoDB imports
-try:
-    from pymongo import MongoClient
-    from bson import ObjectId
-    MONGODB_AVAILABLE = True
-except ImportError:
-    MONGODB_AVAILABLE = False
-    print("⚠️ MongoDB not available. Install with: pip install pymongo")
+# MongoDB imports - REMOVED
+MONGODB_AVAILABLE = False
 
 app = Flask(__name__)
 CORS(app)
@@ -68,31 +77,15 @@ app.config['SECRET_KEY'] = secrets.token_hex(32)
 GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'  # Replace with your actual Google Client ID
 GOOGLE_CLIENT_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'  # Replace with your actual Google Client Secret
 
-# MongoDB Configuration
-MONGODB_URI = os.getenv('MONGODB_ATLAS_URI', 'mongodb://localhost:27017/')
-DB_NAME = 'typing_practice'
+# MongoDB Configuration - REMOVED
+# Initialize database - REMOVED
+db = None
 
-# Initialize MongoDB connection
-def init_mongodb():
-    if not MONGODB_AVAILABLE:
-        return None
-    
-    try:
-        client = MongoClient(MONGODB_URI)
-        db = client[DB_NAME]
-        # Test connection
-        client.admin.command('ping')
-        print("✅ Connected to MongoDB")
-        return db
-    except Exception as e:
-        print(f"❌ MongoDB connection failed: {e}")
-        return None
-
-# Initialize database
-db = init_mongodb()
-
-# Fallback in-memory storage if MongoDB is not available
+# Firebase-only authentication - no local storage
 USERS = {}
+
+# Typing history storage
+TYPING_SESSIONS = {}
 
 # Available programming languages and their snippet files
 LANGUAGES = {
@@ -138,41 +131,70 @@ def load_snippets():
 # Load snippets on startup
 SNIPPETS, SNIPPET_COUNTS = load_snippets()
 
-# Database helper functions
+# Firebase-only user management functions
 def get_user_by_username(username):
-    """Get user from database or memory"""
-    if db is not None:
-        return db.users.find_one({'username': username})
-    else:
-        return USERS.get(username)
+    """Get user from Firebase - not implemented for local storage"""
+    # This function is not used when Firebase is the only authentication method
+    return None
 
 def create_user(user_data):
-    """Create user in database or memory"""
-    if db is not None:
-        result = db.users.insert_one(user_data)
-        return result.inserted_id
-    else:
-        USERS[user_data['username']] = user_data
-        return True
+    """Create user in Firebase - local storage disabled"""
+    # Users are created directly in Firebase, not stored locally
+    return True
 
 def update_user(username, update_data):
-    """Update user in database or memory"""
-    if db is not None:
-        return db.users.update_one({'username': username}, {'$set': update_data})
-    else:
-        if username in USERS:
-            USERS[username].update(update_data)
-            return True
-        return False
+    """Update user in Firebase - local storage disabled"""
+    # User updates are handled by Firebase
+    return True
 
 def get_user_count():
-    """Get total user count"""
-    if db is not None:
-        return db.users.count_documents({})
-    else:
-        return len(USERS)
+    """Get total user count from Firebase - local storage disabled"""
+    # User count is managed by Firebase
+    return 0
 
 # Authentication helper functions
+def validate_password(password):
+    """Validate password strength"""
+    # Check minimum length
+    if len(password) < 8:
+        return {
+            'is_valid': False,
+            'message': 'Password must be at least 8 characters long'
+        }
+    
+    # Check for at least one uppercase letter
+    if not re.search(r'[A-Z]', password):
+        return {
+            'is_valid': False,
+            'message': 'Password must contain at least one uppercase letter'
+        }
+    
+    # Check for at least one lowercase letter
+    if not re.search(r'[a-z]', password):
+        return {
+            'is_valid': False,
+            'message': 'Password must contain at least one lowercase letter'
+        }
+    
+    # Check for at least one number
+    if not re.search(r'\d', password):
+        return {
+            'is_valid': False,
+            'message': 'Password must contain at least one number'
+        }
+    
+    # Check for at least one special character
+    if not re.search(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]', password):
+        return {
+            'is_valid': False,
+            'message': 'Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)'
+        }
+    
+    return {
+        'is_valid': True,
+        'message': 'Password is strong'
+    }
+
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -236,10 +258,13 @@ def require_auth(f):
 @app.route('/api/signup', methods=['POST'])
 def signup():
     try:
+        print("🚀 SIGNUP ENDPOINT CALLED")
         data = request.get_json()
         username = data.get('username')
         email = data.get('email', '').lower().strip()
         password = data.get('password')
+        
+        print(f"📝 Signup attempt for username: {username}, email: {email}")
         
         if not username or not email or not password:
             return jsonify({
@@ -256,89 +281,110 @@ def signup():
                 'message': 'Please enter a valid email address'
             }), 400
         
-        # Check if username already exists
-        existing_user = get_user_by_username(username)
-        if existing_user:
+        # Validate password strength
+        password_validation = validate_password(password)
+        if not password_validation['is_valid']:
             return jsonify({
                 'success': False,
-                'message': 'Username already exists'
+                'message': password_validation['message']
             }), 400
         
-        # Check if email domain exists
-        if '@' not in email:
-            return jsonify({
-                'success': False,
-                'message': 'Invalid email format'
-            }), 400
+        # Use Firebase authentication if available
+        print(f"🔧 Firebase check: FIREBASE_AVAILABLE={FIREBASE_AVAILABLE}")
+        firebase_configured = is_firebase_configured()
+        print(f"🔧 Firebase check: is_firebase_configured()={firebase_configured}")
+        print(f"🔧 About to check Firebase condition: {FIREBASE_AVAILABLE and firebase_configured}")
         
-        domain = email.split('@')[1]
-        
-        # Check if domain has valid format
-        domain_pattern = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$')
-        if not domain_pattern.match(domain):
-            return jsonify({
-                'success': False,
-                'message': 'Invalid email domain format'
-            }), 400
-        
-        # List of common email domains that we know exist
-        common_domains = {
-            'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
-            'icloud.com', 'protonmail.com', 'mail.com', 'live.com', 'msn.com',
-            'yandex.com', 'zoho.com', 'fastmail.com', 'tutanota.com',
-            'gmx.com', 'web.de', 't-online.de', 'freenet.de', 'arcor.de'
-        }
-        
-        # AUTOMATED EMAIL VERIFICATION FOR ALL EMAILS
-        print(f"📧 Starting automated email verification for: {email}")
-        email_result = send_verification_email_automated(email)
-        
-        if not email_result['success']:
-            print(f"❌ Email verification failed for {email}: {email_result['message']}")
-            return jsonify({
-                'success': False,
-                'message': f'Email verification failed: {email_result["message"]}'
-            }), 400
-        
-        print(f"✅ Email verification successful for: {email}")
-        
-        # Check if email already exists
-        if db is not None:
-            existing_email = db.users.find_one({'email': email})
-            if existing_email:
+        if FIREBASE_AVAILABLE and firebase_configured:
+            # Create user in Firebase
+            firebase_user, error = create_user_with_email_password(email, password, username)
+            if error:
                 return jsonify({
                     'success': False,
-                    'message': 'Email already registered'
+                    'message': error
                 }), 400
+            
+            # User is created directly in Firebase - no local storage needed
+            print(f"✅ User created in Firebase with UID: {firebase_user.uid}")
+            
+            print(f"✅ New Firebase user registered: {username}")
+            print(f"💾 Stored user data: {user_data}")
+            print(f"📊 Total users in storage: {len(USERS)}")
+            
+            return jsonify({
+                'success': True,
+                'message': 'Account created successfully with Firebase!'
+            })
         else:
-            # Check in memory storage
+            # Fallback to traditional authentication
+            print(f"🔧 Using traditional authentication (Firebase not available or not configured)")
+            print(f"🔧 FIREBASE_AVAILABLE={FIREBASE_AVAILABLE}, firebase_configured={firebase_configured}")
+            # Check if email domain exists
+            if '@' not in email:
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid email format'
+                }), 400
+            
+            domain = email.split('@')[1]
+            
+            # Check if domain has valid format
+            domain_pattern = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$')
+            if not domain_pattern.match(domain):
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid email domain format'
+                }), 400
+            
+            # List of common email domains that we know exist
+            common_domains = {
+                'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+                'icloud.com', 'protonmail.com', 'mail.com', 'live.com', 'msn.com',
+                'yandex.com', 'zoho.com', 'fastmail.com', 'tutanota.com',
+                'gmx.com', 'web.de', 't-online.de', 'freenet.de', 'arcor.de'
+            }
+            
+            # AUTOMATED EMAIL VERIFICATION FOR ALL EMAILS
+            print(f"📧 Starting automated email verification for: {email}")
+            email_result = send_verification_email_automated(email)
+            
+            if not email_result['success']:
+                print(f"❌ Email verification failed for {email}: {email_result['message']}")
+                return jsonify({
+                    'success': False,
+                    'message': f'Email verification failed: {email_result["message"]}'
+                }), 400
+            
+            print(f"✅ Email verification successful for: {email}")
+            
+            # Check if email already exists in memory storage
             email_exists = any(user.get('email', '').lower() == email for user in USERS.values() if isinstance(user, dict))
             if email_exists:
                 return jsonify({
                     'success': False,
                     'message': 'Email already registered'
                 }), 400
-        
-        # Hash password and create user
-        hashed_password = hash_password(password)
-        user_data = {
-            'username': username,
-            'email': email,
-            'password': hashed_password,
-            'created_at': datetime.now(timezone.utc),
-            'is_google_user': False,
-            'last_login': datetime.now(timezone.utc)
-        }
-        
-        # Save to database
-        create_user(user_data)
-        
-        print(f"✅ New user registered: {username}")
-        
-        return jsonify({
-            'success': True,
-            'message': 'Account created successfully! Email verification sent.'
-        })
+            
+            # Hash password and create user
+            hashed_password = hash_password(password)
+            user_data = {
+                'username': username,
+                'email': email,
+                'password': hashed_password,
+                'created_at': datetime.now(timezone.utc),
+                'is_google_user': False,
+                'last_login': datetime.now(timezone.utc)
+            }
+            
+            # Save to database
+            create_user(user_data)
+            
+            print(f"✅ New user registered: {username}")
+            
+            return jsonify({
+                'success': True,
+                'message': 'Account created successfully! Email verification sent.'
+            })
         
     except Exception as e:
         print(f"Error in signup: {e}")
@@ -360,36 +406,79 @@ def login():
                 'message': 'Username and password are required'
             }), 400
         
-        # Get user from database
-        user = get_user_by_username(username)
-        if not user:
+        # Use Firebase authentication if available
+        print(f"🔧 Firebase check: FIREBASE_AVAILABLE={FIREBASE_AVAILABLE}")
+        firebase_configured = is_firebase_configured()
+        print(f"🔧 Firebase check: is_firebase_configured()={firebase_configured}")
+        
+        if FIREBASE_AVAILABLE and firebase_configured:
+            # Firebase-only authentication - no local storage lookup needed
+            print(f"🔧 Attempting Firebase login for username: {username}")
+            
+            # For Firebase authentication, we need the email
+            # Since we don't store users locally, we'll need to get the email from the frontend
+            # or use a different approach. For now, we'll require the frontend to send the email.
+            email = data.get('email')
+            if not email:
+                return jsonify({
+                    'success': False,
+                    'message': 'Email is required for Firebase authentication'
+                }), 400
+            
+            print(f"📧 Using email '{email}' for Firebase authentication")
+            
+            # Sign in with Firebase
+            firebase_user, error = sign_in_with_email_password(email, password)
+            if error:
+                print(f"❌ Firebase authentication failed: {error}")
+                return jsonify({
+                    'success': False,
+                    'message': error
+                }), 401
+            
+            # Generate JWT token
+            token = generate_token(username)
+            
+            print(f"✅ Firebase user logged in: {username}")
+            
             return jsonify({
-                'success': False,
-                'message': 'Invalid username or password'
-            }), 401
-        
-        hashed_password = hash_password(password)
-        
-        if user['password'] != hashed_password:
+                'success': True,
+                'token': token,
+                'username': username,
+                'email': email
+            })
+        else:
+            # Fallback to traditional authentication
+            # Get user from database
+            user = get_user_by_username(username)
+            if not user:
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid username or password'
+                }), 401
+            
+            hashed_password = hash_password(password)
+            
+            if user['password'] != hashed_password:
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid username or password'
+                }), 401
+            
+            # Update last login time
+            update_user(username, {'last_login': datetime.now(timezone.utc)})
+            
+            # Generate JWT token
+            token = generate_token(username)
+            
+            print(f"✅ User logged in: {username}")
+            
             return jsonify({
-                'success': False,
-                'message': 'Invalid username or password'
-            }), 401
-        
-        # Update last login time
-        update_user(username, {'last_login': datetime.now(timezone.utc)})
-        
-        # Generate JWT token
-        token = generate_token(username)
-        
-        print(f"✅ User logged in: {username}")
-        
-        return jsonify({
-            'success': True,
-            'token': token,
-            'username': username,
-            'email': user.get('email', '')
-        })
+                'success': True,
+                'token': token,
+                'username': username,
+                'email': user.get('email', '')
+            })
         
     except Exception as e:
         print(f"Error in login: {e}")
@@ -541,8 +630,57 @@ def health():
         'users_count': get_user_count(),
         'languages_loaded': len([lang for lang in LANGUAGES if SNIPPET_COUNTS.get(lang, 0) > 0]),
         'total_snippets': sum(SNIPPET_COUNTS.values()),
-        'database_connected': db is not None
+        'database_connected': False,
+        'mongodb_disabled': True,
+        'firebase_available': FIREBASE_AVAILABLE,
+        'firebase_configured': is_firebase_configured() if FIREBASE_AVAILABLE else False
     })
+
+@app.route('/api/firebase-config', methods=['GET'])
+def get_firebase_config():
+    """Get Firebase Web SDK configuration for frontend"""
+    try:
+        if FIREBASE_AVAILABLE:
+            config = get_firebase_web_config()
+            return jsonify({
+                'success': True,
+                'config': config
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Firebase not available'
+            }), 400
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error getting Firebase config: {str(e)}'
+        }), 500
+
+@app.route('/api/user/<username>', methods=['GET'])
+def get_user_by_username_endpoint(username):
+    """Get user data by username for Firebase login"""
+    try:
+        user = get_user_by_username(username)
+        if user:
+            return jsonify({
+                'success': True,
+                'user': {
+                    'username': user.get('username'),
+                    'email': user.get('email'),
+                    'uid': user.get('uid')
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'User not found'
+            }), 404
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error getting user: {str(e)}'
+        }), 500
 
 @app.route('/api/save-typing-session', methods=['POST'])
 def save_typing_session():
@@ -568,20 +706,33 @@ def save_typing_session():
             'wpm': wpm,
             'accuracy': accuracy,
             'time_taken': time_taken,
-            'date': datetime.now(timezone.utc),
+            'date': datetime.now(timezone.utc).isoformat(),
             'practice_type': f"{language} Practice"
         }
         
-        # Save to database
-        if db is not None:
-            result = db.typing_sessions.insert_one(session_data)
-            print(f"✅ Typing session saved for {username}: {language} - WPM: {wpm}, Accuracy: {accuracy}%")
-        else:
-            # Fallback to memory storage
-            if 'typing_sessions' not in USERS:
-                USERS['typing_sessions'] = []
-            USERS['typing_sessions'].append(session_data)
-            print(f"✅ Typing session saved (memory) for {username}: {language}")
+        # Try to save to Firestore first, fallback to memory
+        if FIREBASE_AVAILABLE:
+            # Get user ID from Firebase (you might need to implement this)
+            # For now, we'll use username as user_id
+            user_id = username
+            success, error = save_typing_session_to_firestore(user_id, session_data)
+            if success:
+                print(f"✅ Typing session saved to Firestore for {username}: {language} - WPM: {wpm}, Accuracy: {accuracy}%")
+                return jsonify({
+                    'success': True,
+                    'message': 'Typing session saved to Firebase successfully'
+                })
+            else:
+                print(f"⚠️ Firestore save failed, falling back to memory: {error}")
+        
+        # Fallback to memory storage
+        if username not in TYPING_SESSIONS:
+            TYPING_SESSIONS[username] = []
+        
+        TYPING_SESSIONS[username].append(session_data)
+        
+        print(f"✅ Typing session saved to memory for {username}: {language} - WPM: {wpm}, Accuracy: {accuracy}%")
+        print(f"📊 Total sessions for {username}: {len(TYPING_SESSIONS[username])}")
         
         return jsonify({
             'success': True,
@@ -607,33 +758,23 @@ def get_typing_history():
                 'message': 'Username is required'
             }), 400
         
-        # Get history from database
-        if db is not None:
-            sessions = list(db.typing_sessions.find(
-                {'username': username},
-                {'_id': 0}  # Exclude MongoDB ObjectId
-            ).sort('date', -1))  # Sort by date descending (newest first)
+        # Try to get from Firestore first, fallback to memory
+        sessions = []
+        
+        if FIREBASE_AVAILABLE:
+            # Get user ID from Firebase (you might need to implement this)
+            # For now, we'll use username as user_id
+            user_id = username
+            sessions, error = get_typing_history_from_firestore(user_id)
+            if error:
+                print(f"⚠️ Firestore retrieval failed, falling back to memory: {error}")
+                sessions = TYPING_SESSIONS.get(username, [])
+            else:
+                print(f"📊 Retrieved {len(sessions)} typing sessions from Firestore for {username}")
         else:
-            # Get from memory storage
-            sessions = []
-            if 'typing_sessions' in USERS:
-                sessions = [s for s in USERS['typing_sessions'] if s.get('username') == username]
-                sessions.sort(key=lambda x: x.get('date', datetime.now(timezone.utc)), reverse=True)
-        
-        # Format dates for display (Windows compatible)
-        for session in sessions:
-            if 'date' in session:
-                if isinstance(session['date'], datetime):
-                    # Format as M/D/YYYY (Windows compatible)
-                    session['date'] = session['date'].strftime('%m/%d/%Y').lstrip('0').replace('/0', '/')
-                elif isinstance(session['date'], str):
-                    # Already formatted, keep as is
-                    pass
-                else:
-                    # Fallback formatting
-                    session['date'] = datetime.now(timezone.utc).strftime('%m/%d/%Y').lstrip('0').replace('/0', '/')
-        
-        print(f"📊 Retrieved {len(sessions)} typing sessions for {username}")
+            # Fallback to memory storage
+            sessions = TYPING_SESSIONS.get(username, [])
+            print(f"📊 Retrieved {len(sessions)} typing sessions from memory for {username}")
         
         return jsonify({
             'success': True,
@@ -645,6 +786,72 @@ def get_typing_history():
         return jsonify({
             'success': False,
             'message': 'Failed to get typing history'
+        }), 500
+
+@app.route('/api/user-stats/<username>', methods=['GET'])
+def get_user_stats(username):
+    """Get typing statistics for a user"""
+    try:
+        if not username:
+            return jsonify({
+                'success': False,
+                'message': 'Username is required'
+            }), 400
+        
+        # Try to get stats from Firestore first, fallback to memory
+        stats = None
+        
+        if FIREBASE_AVAILABLE:
+            # Get user ID from Firebase (you might need to implement this)
+            # For now, we'll use username as user_id
+            user_id = username
+            stats, error = get_user_stats_from_firestore(user_id)
+            if error:
+                print(f"⚠️ Firestore stats failed, falling back to memory: {error}")
+                stats = None
+        
+        if stats is None:
+            # Fallback to memory storage
+            sessions = TYPING_SESSIONS.get(username, [])
+            
+            if not sessions:
+                stats = {
+                    'total_sessions': 0,
+                    'avg_wpm': 0,
+                    'best_wpm': 0,
+                    'avg_accuracy': 0,
+                    'total_time': 0,
+                    'languages_practiced': []
+                }
+            else:
+                # Calculate statistics from memory
+                total_sessions = len(sessions)
+                wpm_values = [session['wpm'] for session in sessions]
+                accuracy_values = [session['accuracy'] for session in sessions]
+                time_values = [session['time_taken'] for session in sessions]
+                languages = list(set(session['language'] for session in sessions))
+                
+                stats = {
+                    'total_sessions': total_sessions,
+                    'avg_wpm': round(sum(wpm_values) / total_sessions, 2) if total_sessions > 0 else 0,
+                    'best_wpm': round(max(wpm_values), 2) if wpm_values else 0,
+                    'avg_accuracy': round(sum(accuracy_values) / total_sessions, 2) if total_sessions > 0 else 0,
+                    'total_time': sum(time_values),
+                    'languages_practiced': languages
+                }
+        
+        print(f"📊 User stats for {username}: {stats['total_sessions']} sessions, avg WPM: {stats['avg_wpm']:.2f}")
+        
+        return jsonify({
+            'success': True,
+            'stats': stats
+        })
+        
+    except Exception as e:
+        print(f"Error getting user stats: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Failed to get user statistics'
         }), 500
 
 @app.route('/api/check-email', methods=['POST'])
@@ -660,13 +867,8 @@ def check_email():
                 'message': 'Email is required'
             }), 400
         
-        # Check if email exists in database
-        if db is not None:
-            existing_user = db.users.find_one({'email': email})
-            exists = existing_user is not None
-        else:
-            # Check in memory storage
-            exists = any(user.get('email', '').lower() == email for user in USERS.values() if isinstance(user, dict))
+        # Firebase-only mode - email checking is not available locally
+        exists = False
         
         return jsonify({
             'success': True,
@@ -1070,10 +1272,7 @@ def check_email_domain():
 if __name__ == '__main__':
     print("📝 Using local snippets for code generation")
     print("🔐 Authentication system enabled with Google OAuth")
-    if db is not None:
-        print("🗄️ MongoDB connected - persistent user storage enabled")
-    else:
-        print("⚠️ Running with in-memory storage (install pymongo for database)")
+    print("💾 Using in-memory storage only")
     print(f"📊 Loaded {sum(SNIPPET_COUNTS.values())} snippets across {len([lang for lang in LANGUAGES if SNIPPET_COUNTS.get(lang, 0) > 0])} languages")
     print("🚀 Flask server started at http://localhost:5000")
     print("✅ Ready for typing practice with Google Sign-In!")
