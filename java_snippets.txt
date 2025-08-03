@@ -1,0 +1,355 @@
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int x = 5;
+        System.out.println(x);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String name = sc.nextLine();
+        System.out.println("Hello, " + name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        for(int i = 1; i <= 10; i++) {
+            System.out.println(i);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] numbers = {1, 2, 3, 4, 5};
+        for(int num : numbers) {
+            System.out.println(num);
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        System.out.println(n * n);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int sum = 0;
+        for(int i = 1; i <= 5; i++) {
+            sum += i;
+        }
+        System.out.println(sum);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        for(int item : arr) {
+            System.out.println(item);
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        if(num % 2 == 0) {
+            System.out.println("Even");
+        } else {
+            System.out.println("Odd");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int a = 10, b = 20;
+        int max = (a > b) ? a : b;
+        System.out.println(max);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int count = 0;
+        for(int i = 1; i <= 100; i++) {
+            if(i % 3 == 0) count++;
+        }
+        System.out.println(count);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int factorial = 1;
+        for(int i = 1; i <= n; i++) {
+            factorial *= i;
+        }
+        System.out.println(factorial);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int a = 0, b = 1;
+        System.out.print(a + " " + b + " ");
+        for(int i = 2; i < 10; i++) {
+            int c = a + b;
+            System.out.print(c + " ");
+            a = b;
+            b = c;
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        boolean isPrime = true;
+        for(int i = 2; i < num; i++) {
+            if(num % i == 0) {
+                isPrime = false;
+                break;
+            }
+        }
+        System.out.println(isPrime ? "Prime" : "Not Prime");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] arr = {5, 2, 8, 1, 9};
+        int max = arr[0];
+        for(int num : arr) {
+            if(num > max) max = num;
+        }
+        System.out.println(max);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j <= i; j++) {
+                System.out.print("* ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        int sum = 0;
+        while(num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        System.out.println(sum);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int a = 10, b = 20;
+        System.out.println("Before swap: " + a + " " + b);
+        int temp = a;
+        a = b;
+        b = temp;
+        System.out.println("After swap: " + a + " " + b);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        int sum = 0;
+        for(int num : arr) {
+            sum += num;
+        }
+        double average = (double)sum / arr.length;
+        System.out.println(average);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        int reverse = 0;
+        while(num > 0) {
+            reverse = reverse * 10 + num % 10;
+            num /= 10;
+        }
+        System.out.println(reverse);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        if(num > 0) {
+            System.out.println("Positive");
+        } else if(num < 0) {
+            System.out.println("Negative");
+        } else {
+            System.out.println("Zero");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] numbers = {1, 2, 3, 4, 5};
+        for(int i = 0; i < numbers.length; i++) {
+            numbers[i] = numbers[i] * numbers[i];
+        }
+        for(int num : numbers) {
+            System.out.println(num);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        String text = "Hello World";
+        String vowels = "aeiou";
+        int count = 0;
+        for(char c : text.toLowerCase().toCharArray()) {
+            if(vowels.indexOf(c) != -1) count++;
+        }
+        System.out.println(count);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for(int i = 1; i <= n; i++) {
+            if(i % 2 == 0) {
+                System.out.println(i);
+            }
+        }
+    }
+}
+
+import java.util.Arrays;
+public class Main {
+    public static void main(String[] args) {
+        int[] arr = {3, 1, 4, 1, 5, 9, 2, 6};
+        Arrays.sort(arr);
+        for(int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String word = sc.nextLine();
+        String reverse = new StringBuilder(word).reverse().toString();
+        if(word.equals(reverse)) {
+            System.out.println("Palindrome");
+        } else {
+            System.out.println("Not Palindrome");
+        }
+    }
+}
+
+import java.util.Scanner;
+import java.util.ArrayList;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int num = sc.nextInt();
+        ArrayList<Integer> factors = new ArrayList<>();
+        for(int i = 1; i <= num; i++) {
+            if(num % i == 0) {
+                factors.add(i);
+            }
+        }
+        System.out.println(factors);
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String text = sc.nextLine();
+        String[] words = text.split(" ");
+        System.out.println(words.length);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] numbers = {1, 2, 3, 4, 5};
+        for(int num : numbers) {
+            if(num % 2 == 0) {
+                System.out.println(num);
+            }
+        }
+    }
+}
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j <= i; j++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        int min = arr[0], max = arr[0];
+        for(int num : arr) {
+            if(num < min) min = num;
+            if(num > max) max = num;
+        }
+        System.out.println("Min: " + min + " Max: " + max);
+    }
+} 

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Programming Typing Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    .page { display: block; }
+    .page.hidden { display: none; }
+    .lesson-card {
+      @apply bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white p-6 rounded-lg cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform;
+    }
+    .lesson-card.active {
+      @apply bg-gradient-to-br from-blue-600 to-blue-700 border-yellow-400 border-4 shadow-2xl scale-105;
+    }
+    #snippet {
+      @apply font-mono text-sm leading-relaxed;
+    }
+    #input {
+      @apply font-mono text-sm;
+    }
+    .google-btn {
+      @apply w-full bg-white text-gray-700 font-semibold py-3 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 shadow-md">
+    <div class="w-full flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold">Programming Typing Practice</h1>
+      <div class="flex items-center space-x-4">
+        <a href="#home" class="hover:text-blue-400" onclick="showPage('home')">Home</a>
+        <a href="#practice" class="hover:text-blue-400" onclick="showPage('practice')">Practice</a>
+        <a href="#about" class="hover:text-blue-400" onclick="showPage('about')">About</a>
+        <div id="auth-links" class="flex items-center space-x-4">
+          <a href="#login" class="hover:text-blue-400" onclick="showPage('login')">Login</a>
+          <a href="#signup" class="hover:text-blue-400" onclick="showPage('signup')">Sign Up</a>
+        </div>
+        <div id="user-info" class="hidden flex items-center space-x-4">
+          <span id="username-display" class="text-blue-400 cursor-pointer hover:text-blue-300" onclick="showTypingHistory()"></span>
+          <button onclick="logout()" class="hover:text-red-400">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full p-6">
+
+    <!-- Home Page -->
+    <div id="home" class="page">
+      <h2 class="text-3xl font-bold mb-4 text-center">Welcome to Programming Typing Practice</h2>
+      <p class="text-lg mb-4">Improve your coding speed and accuracy with our interactive typing practice tool. Type real code snippets in multiple programming languages, track your progress, and become a faster coder!</p>
+      <a href="#practice" onclick="showPage('practice')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Start Practicing</a>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login" class="page hidden">
+      <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-6 text-center">Login</h2>
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="login-username" class="block text-sm font-medium mb-2">Username</label>
+            <input type="text" id="login-username" name="username" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label for="login-password" class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="login-password" name="password" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <button type="submit" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+            Login
+          </button>
+        </form>
+        
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-600"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+          </div>
+        </div>
+        
+        <!-- Google Sign-In Button -->
+        <div id="google-signin-login" class="mb-4"></div>
+        
+        <div class="mt-4 text-center">
+          <p class="text-gray-400">Don't have an account? 
+            <a href="#signup" onclick="showPage('signup')" class="text-blue-400 hover:text-blue-300">Sign up</a>
+          </p>
+        </div>
+        <div id="login-message" class="mt-4 text-center hidden"></div>
+      </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signup" class="page hidden">
+      <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-6 text-center">Sign Up</h2>
+        <form id="signup-form" class="space-y-4">
+          <div>
+            <label for="signup-username" class="block text-sm font-medium mb-2">Username</label>
+            <input type="text" id="signup-username" name="username" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label for="signup-email" class="block text-sm font-medium mb-2">Email</label>
+            <input type="email" id="signup-email" name="email" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+            <div id="email-validation-message" class="mt-2 text-sm hidden"></div>
+          </div>
+          <div>
+            <label for="signup-password" class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="signup-password" name="password" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label for="signup-confirm-password" class="block text-sm font-medium mb-2">Confirm Password</label>
+            <input type="password" id="signup-confirm-password" name="confirmPassword" required 
+                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <button type="submit" 
+                  class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+            Sign Up
+          </button>
+        </form>
+        
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-600"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+          </div>
+        </div>
+        
+        <!-- Google Sign-In Button -->
+        <div id="google-signin-signup" class="mb-4"></div>
+        
+        <div class="mt-4 text-center">
+          <p class="text-gray-400">Already have an account? 
+            <a href="#login" onclick="showPage('login')" class="text-blue-400 hover:text-blue-300">Login</a>
+          </p>
+        </div>
+        <div id="signup-message" class="mt-4 text-center hidden"></div>
+      </div>
+    </div>
+
+    <!-- Practice Page -->
+    <div id="practice" class="page hidden">
+      <h2 class="text-3xl font-bold mb-8 text-center">Practice Programming Languages</h2>
+    
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-4">
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #3b82f6, #60a5fa); border: 2px solid #60a5fa;" onclick="selectLanguage('python')">
+          Python
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #f97316, #f59e0b); border: 2px solid #f59e0b;" onclick="selectLanguage('javascript')">
+          JavaScript
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #8b5cf6, #a78bfa); border: 2px solid #a78bfa;" onclick="selectLanguage('java')">
+          Java
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #6b7280, #9ca3af); border: 2px solid #9ca3af;" onclick="selectLanguage('cpp')">
+          C++
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #0ea5e9, #38bdf8); border: 2px solid #38bdf8;" onclick="selectLanguage('csharp')">
+          C#
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #6366f1, #818cf8); border: 2px solid #818cf8;" onclick="selectLanguage('php')">
+          PHP
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #ec4899, #f472b6); border: 2px solid #f472b6;" onclick="selectLanguage('ruby')">
+          Ruby
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #10b981, #34d399); border: 2px solid #34d399;" onclick="selectLanguage('go')">
+          Go
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #e11d48, #f43f5e); border: 2px solid #f43f5e;" onclick="selectLanguage('rust')">
+          Rust
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #f43f5e, #fb7185); border: 2px solid #fb7185;" onclick="selectLanguage('swift')">
+          Swift
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #9333ea, #a855f7); border: 2px solid #a855f7;" onclick="selectLanguage('kotlin')">
+          Kotlin
+        </button>
+    
+        <button class="lesson-card rounded-lg px-6 py-4 font-semibold text-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+          style="background: linear-gradient(to right, #06b6d4, #22d3ee); border: 2px solid #22d3ee;" onclick="selectLanguage('typescript')">
+          TypeScript
+        </button>
+    
+      </div>
+    
+      <!-- Typing Snippet Box -->
+      <div id="game-container" class="bg-gray-800 p-6 rounded-lg shadow-lg mt-10 max-w-3xl mx-auto hidden">
+        
+        <!-- Snippet Info Display -->
+        <div id="snippet-info" class="mb-4 text-sm font-medium text-center text-blue-400"></div>
+        
+        <!-- Snippet Message Display -->
+        <div id="snippet-message" class="mb-4 text-center hidden"></div>
+
+        <div id="snippet-source" class="mb-2 text-sm font-medium text-center"></div>
+        <div id="snippet" class="text-lg mb-4 whitespace-pre-wrap"></div>
+        <textarea id="input" class="w-full p-2 bg-gray-700 rounded text-white" rows="5" placeholder="Start typing here..."></textarea>
+        <div class="flex justify-between mt-4">
+          <div><span>Time: </span><span id="timer">0</span>s</div>
+          <div><span>Accuracy: </span><span id="accuracy">0%</span></div>
+          <div><span>WPS: </span><span id="wpm">0</span></div>
+        </div>
+        <button id="reset-btn" class="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">Reset</button>
+        <button id="generate-new-btn" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
+          📖 Load New Snippet
+        </button>
+      </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="about" class="page hidden">
+      <h2 class="text-3xl font-bold mb-4 text-center">About</h2>
+      <p class="text-lg mb-4">This website is designed for programmers looking to improve their typing skills with code in multiple programming languages. Practice with real code snippets, get instant feedback, and track your progress with metrics like accuracy and words per minute (WPM).</p>
+      <p class="text-lg">Built with HTML, JavaScript, and Tailwind CSS, this tool is open for contributions. Feel free to suggest new features or code snippets!</p>
+    </div>
+
+    <!-- History Page -->
+    <div id="history" class="page hidden">
+      <h2 class="text-3xl font-bold mb-8 text-center">Your Typing History</h2>
+      
+      <div id="history-container" class="max-w-4xl mx-auto px-4">
+        <!-- History sessions will be loaded here -->
+        <div id="loading-history" class="text-center text-gray-400">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          Loading your typing history...
+        </div>
+        
+        <div id="no-history" class="text-center text-gray-400 hidden">
+          <div class="text-6xl mb-4">📝</div>
+          <h3 class="text-xl font-semibold mb-2">No typing history yet</h3>
+          <p>Start practicing to see your typing sessions here!</p>
+          <button onclick="showPage('practice')" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+            Start Practicing
+          </button>
+        </div>
+        
+        <div id="history-sessions" class="space-y-4">
+          <!-- History cards will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 p-4 text-center w-full">
+    <p>© 2025 Programming Typing Practice. All rights reserved.</p>
+    <p>Built with <span class="text-blue-400">Tailwind CSS</span></p>
+  </footer>
+
+  <script src="js/main.js?v=20"></script>
+</body>
+</html>

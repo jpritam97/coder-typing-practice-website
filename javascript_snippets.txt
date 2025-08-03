@@ -1,0 +1,380 @@
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10));
+
+function bubbleSort(arr) {
+    const n = arr.length;
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+    }
+    return arr;
+}
+
+const numbers = [64, 34, 25, 12, 22, 11, 90];
+const sortedNumbers = bubbleSort([...numbers]);
+console.log(sortedNumbers);
+
+class Calculator {
+    constructor() {
+        this.result = 0;
+    }
+    
+    add(x) {
+        this.result += x;
+        return this;
+    }
+    
+    subtract(x) {
+        this.result -= x;
+        return this;
+    }
+    
+    getResult() {
+        return this.result;
+    }
+}
+
+const calc = new Calculator();
+const result = calc.add(10).subtract(3).getResult();
+console.log(result);
+
+function isPrime(n) {
+    if (n < 2) return false;
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) return false;
+    }
+    return true;
+}
+
+const primes = Array.from({length: 18}, (_, i) => i + 2).filter(isPrime);
+console.log(primes);
+
+function reverseString(s) {
+    return s.split('').reverse().join('');
+}
+
+const text = "Hello, World!";
+const reversedText = reverseString(text);
+console.log(reversedText);
+
+function factorial(n) {
+    if (n === 0 || n === 1) return 1;
+    return n * factorial(n - 1);
+}
+
+console.log(factorial(5));
+
+function findMax(arr) {
+    if (arr.length === 0) return null;
+    return Math.max(...arr);
+}
+
+const numbers = [3, 7, 2, 9, 1, 8];
+const maxNumber = findMax(numbers);
+console.log(maxNumber);
+
+function countVowels(text) {
+    const vowels = 'aeiouAEIOU';
+    return text.split('').filter(char => vowels.includes(char)).length;
+}
+
+const sentence = "Hello, how are you?";
+const vowelCount = countVowels(sentence);
+console.log(vowelCount);
+
+function isPalindrome(s) {
+    const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return cleaned === cleaned.split('').reverse().join('');
+}
+
+const testStrings = ["racecar", "A man a plan a canal Panama", "hello"];
+testStrings.forEach(s => console.log(`'${s}' is palindrome: ${isPalindrome(s)}`));
+
+function binarySearch(arr, target) {
+    let left = 0;
+    let right = arr.length - 1;
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        if (arr[mid] === target) return mid;
+        if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+
+const sortedArray = [1, 3, 5, 7, 9, 11, 13, 15];
+const target = 7;
+const index = binarySearch(sortedArray, target);
+console.log(`Found ${target} at index: ${index}`);
+
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    
+    const mid = Math.floor(arr.length / 2);
+    const left = mergeSort(arr.slice(0, mid));
+    const right = mergeSort(arr.slice(mid));
+    
+    return merge(left, right);
+}
+
+function merge(left, right) {
+    const result = [];
+    let i = 0, j = 0;
+    
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) {
+            result.push(left[i]);
+            i++;
+        } else {
+            result.push(right[j]);
+            j++;
+        }
+    }
+    
+    result.push(...left.slice(i));
+    result.push(...right.slice(j));
+    return result;
+}
+
+const unsorted = [38, 27, 43, 3, 9, 82, 10];
+const sortedList = mergeSort([...unsorted]);
+console.log(sortedList);
+
+function gcd(a, b) {
+    while (b) {
+        [a, b] = [b, a % b];
+    }
+    return a;
+}
+
+function lcm(a, b) {
+    return Math.abs(a * b) / gcd(a, b);
+}
+
+const num1 = 48, num2 = 18;
+console.log(`GCD of ${num1} and ${num2}: ${gcd(num1, num2)}`);
+console.log(`LCM of ${num1} and ${num2}: ${lcm(num1, num2)}`);
+
+function power(base, exponent) {
+    if (exponent === 0) return 1;
+    if (exponent < 0) return 1 / power(base, -exponent);
+    if (exponent % 2 === 0) {
+        const half = power(base, exponent / 2);
+        return half * half;
+    }
+    return base * power(base, exponent - 1);
+}
+
+console.log(power(2, 10));
+console.log(power(5, 3));
+
+function isAnagram(str1, str2) {
+    return str1.toLowerCase().split('').sort().join('') === 
+           str2.toLowerCase().split('').sort().join('');
+}
+
+const word1 = "listen", word2 = "silent";
+console.log(`'${word1}' and '${word2}' are anagrams: ${isAnagram(word1, word2)}`);
+
+function findDuplicates(arr) {
+    const seen = new Set();
+    const duplicates = new Set();
+    
+    for (const item of arr) {
+        if (seen.has(item)) {
+            duplicates.add(item);
+        } else {
+            seen.add(item);
+        }
+    }
+    
+    return Array.from(duplicates);
+}
+
+const numbers = [1, 2, 3, 4, 2, 5, 6, 3, 7, 8, 1];
+const duplicateNums = findDuplicates(numbers);
+console.log(duplicateNums);
+
+function removeDuplicates(arr) {
+    return [...new Set(arr)];
+}
+
+const original = [1, 2, 2, 3, 4, 4, 5, 6, 6, 7];
+const unique = removeDuplicates(original);
+console.log(unique);
+
+function isPerfectSquare(n) {
+    if (n < 0) return false;
+    const root = Math.floor(Math.sqrt(n));
+    return root * root === n;
+}
+
+const testNumbers = [16, 25, 30, 49, 64];
+testNumbers.forEach(num => console.log(`${num} is perfect square: ${isPerfectSquare(num)}`));
+
+function generateFibonacciSequence(n) {
+    const sequence = [0, 1];
+    for (let i = 2; i < n; i++) {
+        sequence.push(sequence[i - 1] + sequence[i - 2]);
+    }
+    return sequence;
+}
+
+const fibSequence = generateFibonacciSequence(10);
+console.log(fibSequence);
+
+function isArmstrongNumber(n) {
+    const digits = String(n);
+    const power = digits.length;
+    const total = digits.split('').reduce((sum, digit) => sum + Math.pow(parseInt(digit), power), 0);
+    return total === n;
+}
+
+const armstrongNumbers = Array.from({length: 999}, (_, i) => i + 1).filter(isArmstrongNumber);
+console.log(armstrongNumbers);
+
+function reverseWords(sentence) {
+    return sentence.split(' ').map(word => word.split('').reverse().join('')).join(' ');
+}
+
+const sentence = "Hello world this is a test";
+const reversedSentence = reverseWords(sentence);
+console.log(reversedSentence);
+
+function findMissingNumber(arr) {
+    const n = arr.length + 1;
+    const expectedSum = (n * (n + 1)) / 2;
+    const actualSum = arr.reduce((sum, num) => sum + num, 0);
+    return expectedSum - actualSum;
+}
+
+const numbers = [1, 2, 4, 6, 3, 7, 8];
+const missing = findMissingNumber(numbers);
+console.log(`Missing number: ${missing}`);
+
+function isValidParentheses(s) {
+    const stack = [];
+    const brackets = {')': '(', '}': '{', ']': '['};
+    
+    for (const char of s) {
+        if ('({['.includes(char)) {
+            stack.push(char);
+        } else if (')}]'.includes(char)) {
+            if (stack.length === 0 || stack.pop() !== brackets[char]) {
+                return false;
+            }
+        }
+    }
+    
+    return stack.length === 0;
+}
+
+const testStrings = ["()", "({})", "([)]", "{[()]}"];
+testStrings.forEach(s => console.log(`'${s}' is valid: ${isValidParentheses(s)}`));
+
+function longestCommonSubsequence(str1, str2) {
+    const m = str1.length, n = str2.length;
+    const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
+    
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    
+    return dp[m][n];
+}
+
+const str1 = "ABCDGH", str2 = "AEDFHR";
+const lcsLength = longestCommonSubsequence(str1, str2);
+console.log(`LCS length: ${lcsLength}`);
+
+function isHappyNumber(n) {
+    const seen = new Set();
+    while (n !== 1 && !seen.has(n)) {
+        seen.add(n);
+        n = String(n).split('').reduce((sum, digit) => sum + Math.pow(parseInt(digit), 2), 0);
+    }
+    return n === 1;
+}
+
+const happyNumbers = Array.from({length: 19}, (_, i) => i + 1).filter(isHappyNumber);
+console.log(happyNumbers);
+
+function rotateArray(arr, k) {
+    const n = arr.length;
+    k = k % n;
+    return [...arr.slice(-k), ...arr.slice(0, -k)];
+}
+
+const array = [1, 2, 3, 4, 5, 6, 7];
+const rotated = rotateArray([...array], 3);
+console.log(rotated);
+
+function findPeakElement(arr) {
+    let left = 0, right = arr.length - 1;
+    
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2);
+        if (arr[mid] > arr[mid + 1]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    
+    return left;
+}
+
+const peakArray = [1, 3, 20, 4, 1, 0];
+const peakIndex = findPeakElement(peakArray);
+console.log(`Peak element at index: ${peakIndex}`);
+
+function countWords(text) {
+    const words = text.toLowerCase().split(/\s+/);
+    const wordCount = {};
+    
+    for (const word of words) {
+        const cleanWord = word.replace(/[.,!?]/g, '');
+        if (cleanWord) {
+            wordCount[cleanWord] = (wordCount[cleanWord] || 0) + 1;
+        }
+    }
+    
+    return wordCount;
+}
+
+const text = "Hello world hello javascript world";
+const wordFreq = countWords(text);
+console.log(wordFreq);
+
+function isPerfectNumber(n) {
+    if (n <= 1) return false;
+    const divisors = [1];
+    
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) {
+            divisors.push(i);
+            if (i !== n / i) {
+                divisors.push(n / i);
+            }
+        }
+    }
+    
+    return divisors.reduce((sum, divisor) => sum + divisor, 0) === n;
+}
+
+const perfectNumbers = Array.from({length: 999}, (_, i) => i + 1).filter(isPerfectNumber);
+console.log(perfectNumbers); 

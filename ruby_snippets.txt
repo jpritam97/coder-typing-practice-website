@@ -1,0 +1,130 @@
+puts "Hello, World!"
+
+x = 5
+puts x
+
+name = gets.chomp
+puts "Hello, #{name}"
+
+(1..10).each { |i| puts i }
+
+numbers = [1, 2, 3, 4, 5]
+numbers.each { |num| puts num }
+
+n = gets.to_i
+puts n * n
+
+sum = 0
+(1..5).each { |i| sum += i }
+puts sum
+
+arr = [1, 2, 3, 4, 5]
+arr.each { |item| puts item }
+
+num = gets.to_i
+puts num % 2 == 0 ? "Even" : "Odd"
+
+a, b = 10, 20
+max = a > b ? a : b
+puts max
+
+count = 0
+(1..100).each { |i| count += 1 if i % 3 == 0 }
+puts count
+
+n = gets.to_i
+factorial = 1
+(1..n).each { |i| factorial *= i }
+puts factorial
+
+a, b = 0, 1
+print "#{a} #{b} "
+(2...10).each do |i|
+  c = a + b
+  print "#{c} "
+  a, b = b, c
+end
+
+num = gets.to_i
+is_prime = true
+(2...num).each do |i|
+  if num % i == 0
+    is_prime = false
+    break
+  end
+end
+puts is_prime ? "Prime" : "Not Prime"
+
+arr = [5, 2, 8, 1, 9]
+max = arr.max
+puts max
+
+n = gets.to_i
+(1..n).each do |i|
+  puts "*" * i
+end
+
+num = gets.to_i
+sum = 0
+while num > 0
+  sum += num % 10
+  num /= 10
+end
+puts sum
+
+a, b = 10, 20
+puts "Before swap: #{a} #{b}"
+a, b = b, a
+puts "After swap: #{a} #{b}"
+
+arr = [1, 2, 3, 4, 5]
+average = arr.sum.to_f / arr.length
+puts average
+
+num = gets.to_i
+reverse = num.to_s.reverse.to_i
+puts reverse
+
+num = gets.to_i
+if num > 0
+  puts "Positive"
+elsif num < 0
+  puts "Negative"
+else
+  puts "Zero"
+end
+
+numbers = [1, 2, 3, 4, 5]
+squares = numbers.map { |x| x * x }
+puts squares
+
+text = "Hello World"
+vowels = "aeiou"
+count = text.downcase.chars.count { |c| vowels.include?(c) }
+puts count
+
+n = gets.to_i
+(1..n).each { |i| puts i if i % 2 == 0 }
+
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+puts arr.sort
+
+word = gets.chomp
+puts word == word.reverse ? "Palindrome" : "Not Palindrome"
+
+num = gets.to_i
+factors = (1..num).select { |i| num % i == 0 }
+puts factors
+
+text = gets.chomp
+puts text.split.length
+
+numbers = [1, 2, 3, 4, 5]
+even_numbers = numbers.select { |x| x % 2 == 0 }
+puts even_numbers
+
+n = gets.to_i
+(1..n).each { |i| puts "*" * i }
+
+arr = [1, 2, 3, 4, 5]
+puts "Min: #{arr.min} Max: #{arr.max}" 

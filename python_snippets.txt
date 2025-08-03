@@ -1,0 +1,522 @@
+print("Hello, World!")
+
+x = 5
+print(x)
+
+name = input("Enter your name: ")
+print("Hello, " + name)
+
+for i in range(1, 11):
+    print(i)
+
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    print(num)
+
+n = int(input("Enter a number: "))
+print(n * n)
+
+sum = 0
+for i in range(1, 6):
+    sum += i
+print(sum)
+
+arr = [1, 2, 3, 4, 5]
+for item in arr:
+    print(item, end=" ")
+
+num = int(input("Enter a number: "))
+if num % 2 == 0:
+    print("Even")
+else:
+    print("Odd")
+
+a, b = 10, 20
+max_num = a if a > b else b
+print(max_num)
+
+count = 0
+for i in range(1, 101):
+    if i % 3 == 0:
+        count += 1
+print(count)
+
+n = int(input("Enter a number: "))
+factorial = 1
+for i in range(1, n + 1):
+    factorial *= i
+print(factorial)
+
+a, b = 0, 1
+print(a, b, end=" ")
+for i in range(2, 10):
+    c = a + b
+    print(c, end=" ")
+    a, b = b, c
+
+num = int(input("Enter a number: "))
+is_prime = True
+for i in range(2, num):
+    if num % i == 0:
+        is_prime = False
+        break
+print("Prime" if is_prime else "Not Prime")
+
+arr = [5, 2, 8, 1, 9]
+max_num = arr[0]
+for num in arr:
+    if num > max_num:
+        max_num = num
+print(max_num)
+
+n = int(input("Enter a number: "))
+for i in range(1, n + 1):
+    for j in range(1, i + 1):
+        print("*", end=" ")
+    print()
+
+num = int(input("Enter a number: "))
+sum_digits = 0
+while num > 0:
+    sum_digits += num % 10
+    num //= 10
+print(sum_digits)
+
+a, b = 10, 20
+print("Before swap:", a, b)
+a, b = b, a
+print("After swap:", a, b)
+
+arr = [1, 2, 3, 4, 5]
+sum_arr = sum(arr)
+average = sum_arr / len(arr)
+print(average)
+
+num = int(input("Enter a number: "))
+reverse = 0
+while num > 0:
+    reverse = reverse * 10 + num % 10
+    num //= 10
+print(reverse)
+
+num = int(input("Enter a number: "))
+if num > 0:
+    print("Positive")
+elif num < 0:
+    print("Negative")
+else:
+    print("Zero")
+
+numbers = [1, 2, 3, 4, 5]
+squares = [x**2 for x in numbers]
+print(squares)
+
+text = "Hello World"
+vowels = "aeiou"
+count = sum(1 for char in text.lower() if char in vowels)
+print(count)
+
+n = int(input("Enter a number: "))
+for i in range(1, n + 1):
+    if i % 2 == 0:
+        print(i, end=" ")
+
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+arr.sort()
+print(arr)
+
+word = input("Enter a word: ")
+if word == word[::-1]:
+    print("Palindrome")
+else:
+    print("Not Palindrome")
+
+num = int(input("Enter a number: "))
+factors = []
+for i in range(1, num + 1):
+    if num % i == 0:
+        factors.append(i)
+print(factors)
+
+text = input("Enter a string: ")
+words = text.split()
+print(len(words))
+
+numbers = [1, 2, 3, 4, 5]
+even_numbers = [x for x in numbers if x % 2 == 0]
+print(even_numbers)
+
+n = int(input("Enter a number: "))
+for i in range(1, n + 1):
+    print("*" * i)
+
+arr = [1, 2, 3, 4, 5]
+min_num = min(arr)
+max_num = max(arr)
+print("Min:", min_num, "Max:", max_num) 
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+print(fibonacci(10))
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+numbers = [64, 34, 25, 12, 22, 11, 90]
+sorted_numbers = bubble_sort(numbers)
+print(sorted_numbers)
+
+class Calculator:
+    def __init__(self):
+        self.result = 0
+    
+    def add(self, x):
+        self.result += x
+        return self
+    
+    def subtract(self, x):
+        self.result -= x
+        return self
+    
+    def get_result(self):
+        return self.result
+
+calc = Calculator()
+result = calc.add(10).subtract(3).get_result()
+print(result)
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+primes = [n for n in range(2, 20) if is_prime(n)]
+print(primes)
+
+def reverse_string(s):
+    return s[::-1]
+
+text = "Hello, World!"
+reversed_text = reverse_string(text)
+print(reversed_text)
+
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n-1)
+
+print(factorial(5))
+
+def find_max(arr):
+    if not arr:
+        return None
+    max_val = arr[0]
+    for num in arr:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+numbers = [3, 7, 2, 9, 1, 8]
+max_number = find_max(numbers)
+print(max_number)
+
+def count_vowels(text):
+    vowels = 'aeiouAEIOU'
+    count = 0
+    for char in text:
+        if char in vowels:
+            count += 1
+    return count
+
+sentence = "Hello, how are you?"
+vowel_count = count_vowels(sentence)
+print(vowel_count)
+
+def is_palindrome(s):
+    cleaned = ''.join(c.lower() for c in s if c.isalnum())
+    return cleaned == cleaned[::-1]
+
+test_strings = ["racecar", "A man a plan a canal Panama", "hello"]
+for s in test_strings:
+    print(f"'{s}' is palindrome: {is_palindrome(s)}")
+
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+sorted_array = [1, 3, 5, 7, 9, 11, 13, 15]
+target = 7
+index = binary_search(sorted_array, target)
+print(f"Found {target} at index: {index}")
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    return merge(left, right)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+    
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+unsorted = [38, 27, 43, 3, 9, 82, 10]
+sorted_list = merge_sort(unsorted)
+print(sorted_list)
+
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    return abs(a * b) // gcd(a, b)
+
+num1, num2 = 48, 18
+print(f"GCD of {num1} and {num2}: {gcd(num1, num2)}")
+print(f"LCM of {num1} and {num2}: {lcm(num1, num2)}")
+
+def power(base, exponent):
+    if exponent == 0:
+        return 1
+    elif exponent < 0:
+        return 1 / power(base, -exponent)
+    elif exponent % 2 == 0:
+        half = power(base, exponent // 2)
+        return half * half
+    else:
+        return base * power(base, exponent - 1)
+
+print(power(2, 10))
+print(power(5, 3))
+
+def is_anagram(str1, str2):
+    return sorted(str1.lower()) == sorted(str2.lower())
+
+word1, word2 = "listen", "silent"
+print(f"'{word1}' and '{word2}' are anagrams: {is_anagram(word1, word2)}")
+
+def find_duplicates(arr):
+    seen = set()
+    duplicates = set()
+    for item in arr:
+        if item in seen:
+            duplicates.add(item)
+        else:
+            seen.add(item)
+    return list(duplicates)
+
+numbers = [1, 2, 3, 4, 2, 5, 6, 3, 7, 8, 1]
+duplicate_nums = find_duplicates(numbers)
+print(duplicate_nums)
+
+def remove_duplicates(arr):
+    return list(dict.fromkeys(arr))
+
+original = [1, 2, 2, 3, 4, 4, 5, 6, 6, 7]
+unique = remove_duplicates(original)
+print(unique)
+
+def is_perfect_square(n):
+    if n < 0:
+        return False
+    root = int(n ** 0.5)
+    return root * root == n
+
+test_numbers = [16, 25, 30, 49, 64]
+for num in test_numbers:
+    print(f"{num} is perfect square: {is_perfect_square(num)}")
+
+def generate_fibonacci_sequence(n):
+    sequence = [0, 1]
+    for i in range(2, n):
+        sequence.append(sequence[i-1] + sequence[i-2])
+    return sequence
+
+fib_sequence = generate_fibonacci_sequence(10)
+print(fib_sequence)
+
+def is_armstrong_number(n):
+    digits = str(n)
+    power = len(digits)
+    total = sum(int(digit) ** power for digit in digits)
+    return total == n
+
+armstrong_numbers = [n for n in range(1, 1000) if is_armstrong_number(n)]
+print(armstrong_numbers)
+
+def reverse_words(sentence):
+    words = sentence.split()
+    reversed_words = [word[::-1] for word in words]
+    return ' '.join(reversed_words)
+
+sentence = "Hello world this is a test"
+reversed_sentence = reverse_words(sentence)
+print(reversed_sentence)
+
+def find_missing_number(arr):
+    n = len(arr) + 1
+    expected_sum = n * (n + 1) // 2
+    actual_sum = sum(arr)
+    return expected_sum - actual_sum
+
+numbers = [1, 2, 4, 6, 3, 7, 8]
+missing = find_missing_number(numbers)
+print(f"Missing number: {missing}")
+
+def is_valid_parentheses(s):
+    stack = []
+    brackets = {')': '(', '}': '{', ']': '['}
+    
+    for char in s:
+        if char in '({[':
+            stack.append(char)
+        elif char in ')}]':
+            if not stack or stack.pop() != brackets[char]:
+                return False
+    
+    return len(stack) == 0
+
+test_strings = ["()", "({})", "([)]", "{[()]}"]
+for s in test_strings:
+    print(f"'{s}' is valid: {is_valid_parentheses(s)}")
+
+def longest_common_subsequence(str1, str2):
+    m, n = len(str1), len(str2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if str1[i-1] == str2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    
+    return dp[m][n]
+
+str1, str2 = "ABCDGH", "AEDFHR"
+lcs_length = longest_common_subsequence(str1, str2)
+print(f"LCS length: {lcs_length}")
+
+def is_happy_number(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(digit) ** 2 for digit in str(n))
+    return n == 1
+
+happy_numbers = [n for n in range(1, 20) if is_happy_number(n)]
+print(happy_numbers)
+
+def rotate_array(arr, k):
+    n = len(arr)
+    k = k % n
+    return arr[-k:] + arr[:-k]
+
+array = [1, 2, 3, 4, 5, 6, 7]
+rotated = rotate_array(array, 3)
+print(rotated)
+
+def find_peak_element(arr):
+    left, right = 0, len(arr) - 1
+    
+    while left < right:
+        mid = (left + right) // 2
+        if arr[mid] > arr[mid + 1]:
+            right = mid
+        else:
+            left = mid + 1
+    
+    return left
+
+peak_array = [1, 3, 20, 4, 1, 0]
+peak_index = find_peak_element(peak_array)
+print(f"Peak element at index: {peak_index}")
+
+def is_valid_sudoku(board):
+    for i in range(9):
+        row = set()
+        col = set()
+        for j in range(9):
+            if board[i][j] != '.':
+                if board[i][j] in row:
+                    return False
+                row.add(board[i][j])
+            if board[j][i] != '.':
+                if board[j][i] in col:
+                    return False
+                col.add(board[j][i])
+    
+    for block in range(9):
+        box = set()
+        for i in range(3):
+            for j in range(3):
+                row = 3 * (block // 3) + i
+                col = 3 * (block % 3) + j
+                if board[row][col] != '.':
+                    if board[row][col] in box:
+                        return False
+                    box.add(board[row][col])
+    
+    return True
+
+def count_words(text):
+    words = text.lower().split()
+    word_count = {}
+    for word in words:
+        word = word.strip('.,!?')
+        if word:
+            word_count[word] = word_count.get(word, 0) + 1
+    return word_count
+
+text = "Hello world hello python world"
+word_freq = count_words(text)
+print(word_freq)
+
+def is_perfect_number(n):
+    if n <= 1:
+        return False
+    divisors = [1]
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            divisors.append(i)
+            if i != n // i:
+                divisors.append(n // i)
+    return sum(divisors) == n
+
+perfect_numbers = [n for n in range(1, 1000) if is_perfect_number(n)]
+print(perfect_numbers) 

@@ -1,0 +1,171 @@
+console.log("Hello, World!");
+
+let x: number = 5;
+console.log(x);
+
+let name: string = prompt("Enter your name:") || "";
+console.log("Hello, " + name);
+
+for (let i: number = 1; i <= 10; i++) {
+    console.log(i);
+}
+
+let numbers: number[] = [1, 2, 3, 4, 5];
+numbers.forEach((num: number) => console.log(num));
+
+let n: number = parseInt(prompt("Enter a number:") || "0");
+console.log(n * n);
+
+let sum: number = 0;
+for (let i: number = 1; i <= 5; i++) {
+    sum += i;
+}
+console.log(sum);
+
+let arr: number[] = [1, 2, 3, 4, 5];
+arr.forEach((item: number) => console.log(item));
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+if (num % 2 === 0) {
+    console.log("Even");
+} else {
+    console.log("Odd");
+}
+
+let a: number = 10, b: number = 20;
+let max: number = a > b ? a : b;
+console.log(max);
+
+let count: number = 0;
+for (let i: number = 1; i <= 100; i++) {
+    if (i % 3 === 0) count++;
+}
+console.log(count);
+
+let n: number = parseInt(prompt("Enter a number:") || "0");
+let factorial: number = 1;
+for (let i: number = 1; i <= n; i++) {
+    factorial *= i;
+}
+console.log(factorial);
+
+let a: number = 0, b: number = 1;
+console.log(a, b);
+for (let i: number = 2; i < 10; i++) {
+    let c: number = a + b;
+    console.log(c);
+    a = b;
+    b = c;
+}
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+let isPrime: boolean = true;
+for (let i: number = 2; i < num; i++) {
+    if (num % i === 0) {
+        isPrime = false;
+        break;
+    }
+}
+console.log(isPrime ? "Prime" : "Not Prime");
+
+let arr: number[] = [5, 2, 8, 1, 9];
+let max: number = arr[0];
+for (let num of arr) {
+    if (num > max) max = num;
+}
+console.log(max);
+
+let n: number = parseInt(prompt("Enter a number:") || "0");
+for (let i: number = 1; i <= n; i++) {
+    let stars: string = "*".repeat(i);
+    console.log(stars);
+}
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+let sum: number = 0;
+while (num > 0) {
+    sum += num % 10;
+    num = Math.floor(num / 10);
+}
+console.log(sum);
+
+let a: number = 10, b: number = 20;
+console.log("Before swap:", a, b);
+[a, b] = [b, a];
+console.log("After swap:", a, b);
+
+let arr: number[] = [1, 2, 3, 4, 5];
+let sum: number = arr.reduce((acc: number, val: number) => acc + val, 0);
+let average: number = sum / arr.length;
+console.log(average);
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+let reverse: number = 0;
+while (num > 0) {
+    reverse = reverse * 10 + num % 10;
+    num = Math.floor(num / 10);
+}
+console.log(reverse);
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+if (num > 0) {
+    console.log("Positive");
+} else if (num < 0) {
+    console.log("Negative");
+} else {
+    console.log("Zero");
+}
+
+let numbers: number[] = [1, 2, 3, 4, 5];
+let squares: number[] = numbers.map((x: number) => x * x);
+console.log(squares);
+
+let text: string = "Hello World";
+let vowels: string = "aeiou";
+let count: number = text.toLowerCase().split('').filter((char: string) => vowels.includes(char)).length;
+console.log(count);
+
+let n: number = parseInt(prompt("Enter a number:") || "0");
+for (let i: number = 1; i <= n; i++) {
+    if (i % 2 === 0) {
+        console.log(i);
+    }
+}
+
+let arr: number[] = [3, 1, 4, 1, 5, 9, 2, 6];
+arr.sort((a: number, b: number) => a - b);
+console.log(arr);
+
+let word: string = prompt("Enter a word:") || "";
+if (word === word.split('').reverse().join('')) {
+    console.log("Palindrome");
+} else {
+    console.log("Not Palindrome");
+}
+
+let num: number = parseInt(prompt("Enter a number:") || "0");
+let factors: number[] = [];
+for (let i: number = 1; i <= num; i++) {
+    if (num % i === 0) {
+        factors.push(i);
+    }
+}
+console.log(factors);
+
+let text: string = prompt("Enter a string:") || "";
+let words: string[] = text.split(' ');
+console.log(words.length);
+
+let numbers: number[] = [1, 2, 3, 4, 5];
+let evenNumbers: number[] = numbers.filter((x: number) => x % 2 === 0);
+console.log(evenNumbers);
+
+let n: number = parseInt(prompt("Enter a number:") || "0");
+for (let i: number = 1; i <= n; i++) {
+    console.log("*".repeat(i));
+}
+
+let arr: number[] = [1, 2, 3, 4, 5];
+let min: number = Math.min(...arr);
+let max: number = Math.max(...arr);
+console.log("Min:", min, "Max:", max); 

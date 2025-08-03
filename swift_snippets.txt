@@ -1,0 +1,217 @@
+print("Hello, World!")
+
+let x = 5
+print(x)
+
+print("Enter your name: ", terminator: "")
+if let name = readLine() {
+    print("Hello, \(name)")
+}
+
+for i in 1...10 {
+    print(i)
+}
+
+let numbers = [1, 2, 3, 4, 5]
+for num in numbers {
+    print(num)
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let n = Int(input) {
+    print(n * n)
+}
+
+var sum = 0
+for i in 1...5 {
+    sum += i
+}
+print(sum)
+
+let arr = [1, 2, 3, 4, 5]
+for item in arr {
+    print(item)
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let num = Int(input) {
+    if num % 2 == 0 {
+        print("Even")
+    } else {
+        print("Odd")
+    }
+}
+
+let a = 10
+let b = 20
+let max = a > b ? a : b
+print(max)
+
+var count = 0
+for i in 1...100 {
+    if i % 3 == 0 {
+        count += 1
+    }
+}
+print(count)
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let n = Int(input) {
+    var factorial = 1
+    for i in 1...n {
+        factorial *= i
+    }
+    print(factorial)
+}
+
+var a = 0
+var b = 1
+print("\(a) \(b) ", terminator: "")
+for _ in 2..<10 {
+    let c = a + b
+    print("\(c) ", terminator: "")
+    a = b
+    b = c
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let num = Int(input) {
+    var isPrime = true
+    for i in 2..<num {
+        if num % i == 0 {
+            isPrime = false
+            break
+        }
+    }
+    print(isPrime ? "Prime" : "Not Prime")
+}
+
+let arr = [5, 2, 8, 1, 9]
+var max = arr[0]
+for num in arr {
+    if num > max {
+        max = num
+    }
+}
+print(max)
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let n = Int(input) {
+    for i in 1...n {
+        for j in 1...i {
+            print("* ", terminator: "")
+        }
+        print()
+    }
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), var num = Int(input) {
+    var sum = 0
+    while num > 0 {
+        sum += num % 10
+        num /= 10
+    }
+    print(sum)
+}
+
+var a = 10
+var b = 20
+print("Before swap: \(a) \(b)")
+let temp = a
+a = b
+b = temp
+print("After swap: \(a) \(b)")
+
+let arr = [1, 2, 3, 4, 5]
+let sum = arr.reduce(0, +)
+let average = Double(sum) / Double(arr.count)
+print(average)
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), var num = Int(input) {
+    var reverse = 0
+    while num > 0 {
+        reverse = reverse * 10 + num % 10
+        num /= 10
+    }
+    print(reverse)
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let num = Int(input) {
+    if num > 0 {
+        print("Positive")
+    } else if num < 0 {
+        print("Negative")
+    } else {
+        print("Zero")
+    }
+}
+
+let numbers = [1, 2, 3, 4, 5]
+let squares = numbers.map { $0 * $0 }
+for num in squares {
+    print(num)
+}
+
+let text = "Hello World"
+let vowels = "aeiou"
+let count = text.lowercased().filter { vowels.contains($0) }.count
+print(count)
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let n = Int(input) {
+    for i in 1...n {
+        if i % 2 == 0 {
+            print(i)
+        }
+    }
+}
+
+var arr = [3, 1, 4, 1, 5, 9, 2, 6]
+arr.sort()
+for num in arr {
+    print(num, terminator: " ")
+}
+
+print("Enter a word: ", terminator: "")
+if let word = readLine() {
+    let reversed = String(word.reversed())
+    print(word == reversed ? "Palindrome" : "Not Palindrome")
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let num = Int(input) {
+    var factors: [Int] = []
+    for i in 1...num {
+        if num % i == 0 {
+            factors.append(i)
+        }
+    }
+    print(factors)
+}
+
+print("Enter a string: ", terminator: "")
+if let text = readLine() {
+    let words = text.components(separatedBy: " ")
+    print(words.count)
+}
+
+let numbers = [1, 2, 3, 4, 5]
+let evenNumbers = numbers.filter { $0 % 2 == 0 }
+for num in evenNumbers {
+    print(num)
+}
+
+print("Enter a number: ", terminator: "")
+if let input = readLine(), let n = Int(input) {
+    for i in 1...n {
+        print(String(repeating: "*", count: i))
+    }
+}
+
+let arr = [1, 2, 3, 4, 5]
+let min = arr.min() ?? 0
+let max = arr.max() ?? 0
+print("Min: \(min) Max: \(max)") 

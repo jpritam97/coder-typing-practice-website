@@ -1,0 +1,337 @@
+using System;
+class Program {
+    static void Main() {
+        Console.WriteLine("Hello, World!");
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int x = 5;
+        Console.WriteLine(x);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        string name = Console.ReadLine();
+        Console.WriteLine("Hello, " + name);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        for(int i = 1; i <= 10; i++) {
+            Console.WriteLine(i);
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int[] numbers = {1, 2, 3, 4, 5};
+        foreach(int num in numbers) {
+            Console.WriteLine(num);
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int n = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine(n * n);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int sum = 0;
+        for(int i = 1; i <= 5; i++) {
+            sum += i;
+        }
+        Console.WriteLine(sum);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int[] arr = {1, 2, 3, 4, 5};
+        foreach(int item in arr) {
+            Console.WriteLine(item);
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        if(num % 2 == 0) {
+            Console.WriteLine("Even");
+        } else {
+            Console.WriteLine("Odd");
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int a = 10, b = 20;
+        int max = a > b ? a : b;
+        Console.WriteLine(max);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int count = 0;
+        for(int i = 1; i <= 100; i++) {
+            if(i % 3 == 0) count++;
+        }
+        Console.WriteLine(count);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int factorial = 1;
+        for(int i = 1; i <= n; i++) {
+            factorial *= i;
+        }
+        Console.WriteLine(factorial);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int a = 0, b = 1;
+        Console.Write($"{a} {b} ");
+        for(int i = 2; i < 10; i++) {
+            int c = a + b;
+            Console.Write($"{c} ");
+            a = b;
+            b = c;
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        bool isPrime = true;
+        for(int i = 2; i < num; i++) {
+            if(num % i == 0) {
+                isPrime = false;
+                break;
+            }
+        }
+        Console.WriteLine(isPrime ? "Prime" : "Not Prime");
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] arr = {5, 2, 8, 1, 9};
+        int max = arr.Max();
+        Console.WriteLine(max);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int n = Convert.ToInt32(Console.ReadLine());
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j <= i; j++) {
+                Console.Write("* ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        int sum = 0;
+        while(num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        Console.WriteLine(sum);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int a = 10, b = 20;
+        Console.WriteLine($"Before swap: {a} {b}");
+        int temp = a;
+        a = b;
+        b = temp;
+        Console.WriteLine($"After swap: {a} {b}");
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] arr = {1, 2, 3, 4, 5};
+        double average = arr.Average();
+        Console.WriteLine(average);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        int reverse = 0;
+        while(num > 0) {
+            reverse = reverse * 10 + num % 10;
+            num /= 10;
+        }
+        Console.WriteLine(reverse);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        if(num > 0) {
+            Console.WriteLine("Positive");
+        } else if(num < 0) {
+            Console.WriteLine("Negative");
+        } else {
+            Console.WriteLine("Zero");
+        }
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] numbers = {1, 2, 3, 4, 5};
+        var squares = numbers.Select(x => x * x);
+        foreach(int num in squares) {
+            Console.WriteLine(num);
+        }
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        string text = "Hello World";
+        string vowels = "aeiou";
+        int count = text.ToLower().Count(c => vowels.Contains(c));
+        Console.WriteLine(count);
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int n = Convert.ToInt32(Console.ReadLine());
+        for(int i = 1; i <= n; i++) {
+            if(i % 2 == 0) {
+                Console.WriteLine(i);
+            }
+        }
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] arr = {3, 1, 4, 1, 5, 9, 2, 6};
+        Array.Sort(arr);
+        foreach(int num in arr) {
+            Console.Write($"{num} ");
+        }
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        string word = Console.ReadLine();
+        string reverse = new string(word.Reverse().ToArray());
+        Console.WriteLine(word == reverse ? "Palindrome" : "Not Palindrome");
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+class Program {
+    static void Main() {
+        int num = Convert.ToInt32(Console.ReadLine());
+        var factors = Enumerable.Range(1, num).Where(i => num % i == 0).ToList();
+        Console.WriteLine(string.Join(", ", factors));
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        string text = Console.ReadLine();
+        int wordCount = text.Split(' ').Length;
+        Console.WriteLine(wordCount);
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] numbers = {1, 2, 3, 4, 5};
+        var evenNumbers = numbers.Where(x => x % 2 == 0);
+        foreach(int num in evenNumbers) {
+            Console.WriteLine(num);
+        }
+    }
+}
+
+using System;
+class Program {
+    static void Main() {
+        int n = Convert.ToInt32(Console.ReadLine());
+        for(int i = 1; i <= n; i++) {
+            Console.WriteLine(new string('*', i));
+        }
+    }
+}
+
+using System;
+using System.Linq;
+class Program {
+    static void Main() {
+        int[] arr = {1, 2, 3, 4, 5};
+        Console.WriteLine($"Min: {arr.Min()} Max: {arr.Max()}");
+    }
+} 

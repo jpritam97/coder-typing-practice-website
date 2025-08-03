@@ -1,0 +1,35 @@
+# Mosint Configuration File
+# Basic configuration for email verification
+
+# General settings
+general:
+  timeout: 30
+  threads: 10
+
+# Email verification services
+services:
+  # Basic email verification (no API keys required)
+  basic:
+    enabled: true
+    
+  # Disposable email detection
+  disposable:
+    enabled: true
+    
+  # Domain validation
+  domain:
+    enabled: true
+    
+  # MX record checking
+  mx:
+    enabled: true
+    
+  # Syntax validation
+  syntax:
+    enabled: true
+
+# Output settings
+output:
+  format: json
+  file: ""
+  silent: false 

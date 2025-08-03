@@ -1,0 +1,212 @@
+#include <iostream>
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int x = 5;
+    std::cout << x << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int a, b;
+    std::cin >> a >> b;
+    std::cout << a + b << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    for(int i = 1; i <= 10; i++) {
+        std::cout << i << " ";
+    }
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int n;
+    std::cin >> n;
+    std::cout << n * n << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int sum = 0;
+    for(int i = 1; i <= 5; i++) {
+        sum += i;
+    }
+    std::cout << sum << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    for(int i = 0; i < 5; i++) {
+        std::cout << arr[i] << " ";
+    }
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int num;
+    std::cin >> num;
+    if(num % 2 == 0) {
+        std::cout << "Even" << std::endl;
+    } else {
+        std::cout << "Odd" << std::endl;
+    }
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int a = 10, b = 20;
+    int max = (a > b) ? a : b;
+    std::cout << max << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int count = 0;
+    for(int i = 1; i <= 100; i++) {
+        if(i % 3 == 0) count++;
+    }
+    std::cout << count << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int n;
+    std::cin >> n;
+    int factorial = 1;
+    for(int i = 1; i <= n; i++) {
+        factorial *= i;
+    }
+    std::cout << factorial << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int a = 0, b = 1;
+    std::cout << a << " " << b << " ";
+    for(int i = 2; i < 10; i++) {
+        int c = a + b;
+        std::cout << c << " ";
+        a = b;
+        b = c;
+    }
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int num;
+    std::cin >> num;
+    bool isPrime = true;
+    for(int i = 2; i < num; i++) {
+        if(num % i == 0) {
+            isPrime = false;
+            break;
+        }
+    }
+    std::cout << (isPrime ? "Prime" : "Not Prime") << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int arr[] = {5, 2, 8, 1, 9};
+    int max = arr[0];
+    for(int i = 1; i < 5; i++) {
+        if(arr[i] > max) max = arr[i];
+    }
+    std::cout << max << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int n;
+    std::cin >> n;
+    for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= i; j++) {
+            std::cout << "* ";
+        }
+        std::cout << std::endl;
+    }
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int num;
+    std::cin >> num;
+    int sum = 0;
+    while(num > 0) {
+        sum += num % 10;
+        num /= 10;
+    }
+    std::cout << sum << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int a = 10, b = 20;
+    std::cout << "Before swap: " << a << " " << b << std::endl;
+    int temp = a;
+    a = b;
+    b = temp;
+    std::cout << "After swap: " << a << " " << b << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int sum = 0;
+    for(int i = 0; i < 5; i++) {
+        sum += arr[i];
+    }
+    double average = (double)sum / 5;
+    std::cout << average << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int n;
+    std::cin >> n;
+    int reverse = 0;
+    while(n > 0) {
+        reverse = reverse * 10 + n % 10;
+        n /= 10;
+    }
+    std::cout << reverse << std::endl;
+    return 0;
+}
+
+#include <iostream>
+int main() {
+    int num;
+    std::cin >> num;
+    if(num > 0) {
+        std::cout << "Positive" << std::endl;
+    } else if(num < 0) {
+        std::cout << "Negative" << std::endl;
+    } else {
+        std::cout << "Zero" << std::endl;
+    }
+    return 0;
+} 
