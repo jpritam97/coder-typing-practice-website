@@ -2,6 +2,11 @@
 
 A modern web-based typing practice application with Firebase authentication, multiple programming languages, and performance tracking using Firestore.
 
+## ScreenShots
+
+<img width="1919" height="949" alt="Screenshot 2025-08-03 194629" src="https://github.com/user-attachments/assets/e1068847-fb64-4eeb-b09f-2f277be32764" />
+
+
 ## 🚀 Features
 
 ### ✨ Core Features
