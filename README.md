@@ -1,4 +1,4 @@
-# Typing Practice Application
+# Typing Practice Website for Coders
 
 A modern web-based typing practice application with Firebase authentication, multiple programming languages, and performance tracking using Firestore.
 
