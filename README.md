@@ -244,11 +244,7 @@ app.run(host='0.0.0.0', port=5000, debug=False)
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
+   
 ## 🙏 Acknowledgments
 
 - **Flask**: Web framework
