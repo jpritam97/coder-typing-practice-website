@@ -4,14 +4,10 @@ A modern web-based typing practice application with Firebase authentication, mul
 
 ## ScreenShots
 
-<img width="1919" height="947" alt="Screenshot 2025-08-03 194602" src="https://github.com/user-attachments/assets/5e4bdad0-88b3-49aa-a312-da7ca4ebdb10" />
-
-<img width="1919" height="946" alt="Screenshot 2025-08-03 194345" src="https://github.com/user-attachments/assets/5cfdd2e6-0bc7-4117-bc9d-7b8a68f74620" />
-
 <img width="1919" height="950" alt="Screenshot 2025-08-03 194334" src="https://github.com/user-attachments/assets/a87f0923-1588-4576-a9a6-6a3e0c11843a" />
-
+<img width="1919" height="946" alt="Screenshot 2025-08-03 194345" src="https://github.com/user-attachments/assets/5cfdd2e6-0bc7-4117-bc9d-7b8a68f74620" />
 <img width="1915" height="948" alt="Screenshot 2025-08-03 194405" src="https://github.com/user-attachments/assets/774686cf-9c27-4d5e-84f1-ab43c2fa0632" />
-
+<img width="1919" height="947" alt="Screenshot 2025-08-03 194602" src="https://github.com/user-attachments/assets/5e4bdad0-88b3-49aa-a312-da7ca4ebdb10" />
 <img width="1919" height="949" alt="Screenshot 2025-08-03 194629" src="https://github.com/user-attachments/assets/e1068847-fb64-4eeb-b09f-2f277be32764" />
 
 
